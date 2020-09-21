@@ -64,7 +64,10 @@ class _MyAppState extends State<MyApp> {
       authenticated = await auth.authenticateWithBiometrics(
           localizedReason: 'Scan your fingerprint to authenticate',
           useErrorDialogs: true,
-          stickyAuth: true);
+          stickyAuth: true,
+          onPositiveCallback: (val) {
+            print(val);
+          });
       setState(() {
         _isAuthenticating = false;
         _authorized = 'Authenticating';

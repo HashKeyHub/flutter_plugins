@@ -14,39 +14,40 @@ import 'package:intl/intl.dart';
 ///
 /// Provides default values for all messages.
 class AndroidAuthMessages {
-  const AndroidAuthMessages({
-    this.fingerprintHint,
-    this.fingerprintNotRecognized,
-    this.fingerprintSuccess,
-    this.cancelButton,
-    this.signInTitle,
-    this.fingerprintRequiredTitle,
-    this.goToSettingsButton,
-    this.goToSettingsDescription,
-  });
+  const AndroidAuthMessages(
+      {this.tips,
+      this.notRecognized,
+      this.failures,
+      this.success,
+      this.negativeBtn,
+      this.positiveBtn});
 
-  final String fingerprintHint;
-  final String fingerprintNotRecognized;
-  final String fingerprintSuccess;
-  final String cancelButton;
-  final String signInTitle;
-  final String fingerprintRequiredTitle;
-  final String goToSettingsButton;
-  final String goToSettingsDescription;
+  /// 指纹识别提示
+  final String tips;
+
+  /// 指纹识别失败
+  final String notRecognized;
+
+  /// 尝试次数过多，请稍后重试。
+  final String failures;
+
+  /// 指纹识别成功
+  final String success;
+
+  /// 取消按钮
+  final String negativeBtn;
+
+  /// 使用密码支付
+  final String positiveBtn;
 
   Map<String, String> get args {
     return <String, String>{
-      'fingerprintHint': fingerprintHint ?? androidFingerprintHint,
-      'fingerprintNotRecognized':
-          fingerprintNotRecognized ?? androidFingerprintNotRecognized,
-      'fingerprintSuccess': fingerprintSuccess ?? androidFingerprintSuccess,
-      'cancelButton': cancelButton ?? androidCancelButton,
-      'signInTitle': signInTitle ?? androidSignInTitle,
-      'fingerprintRequired':
-          fingerprintRequiredTitle ?? androidFingerprintRequiredTitle,
-      'goToSetting': goToSettingsButton ?? goToSettings,
-      'goToSettingDescription':
-          goToSettingsDescription ?? androidGoToSettingsDescription,
+      'tips': tips ?? "请验证指纹",
+      'notRecognized': notRecognized ?? "指纹验证错误，请重试",
+      'failures': failures ?? "多次验证不通过，请稍后再试",
+      'success': success ?? "验证成功",
+      'negativeBtn': negativeBtn ?? "取消",
+      'positiveBtn': positiveBtn ?? "密码支付",
     };
   }
 }

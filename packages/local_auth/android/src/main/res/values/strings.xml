@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Example</string>
+    <string name="verify_hint">请验证您的指纹</string>
+    <string name="cancel">取消</string>
+</resources>

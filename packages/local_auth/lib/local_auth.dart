@@ -10,6 +10,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
@@ -66,6 +67,7 @@ class LocalAuthentication {
   /// authentication (e.g. lack of relevant hardware). This might throw
   /// [PlatformException] with error code [otherOperatingSystem] on the iOS
   /// simulator.
+  /// callbackValue [onPositiveCallback] -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付
   Future<bool> authenticateWithBiometrics({
     @required String localizedReason,
     bool useErrorDialogs = true,
@@ -73,9 +75,10 @@ class LocalAuthentication {
     AndroidAuthMessages androidAuthStrings = const AndroidAuthMessages(),
     IOSAuthMessages iOSAuthStrings = const IOSAuthMessages(),
     bool sensitiveTransaction = true,
+    ValueChanged<int> onPositiveCallback,
   }) async {
     assert(localizedReason != null);
-    final Map<String, Object> args = <String, Object>{
+    final Map<String, dynamic> args = <String, dynamic>{
       'localizedReason': localizedReason,
       'useErrorDialogs': useErrorDialogs,
       'stickyAuth': stickyAuth,
@@ -92,8 +95,24 @@ class LocalAuthentication {
               'operating systems.',
           details: 'Your operating system is ${_platform.operatingSystem}');
     }
-    return await _channel.invokeMethod<bool>(
-        'authenticateWithBiometrics', args);
+
+    if (_platform.isIOS) {
+      return await _channel.invokeMethod<bool>(
+          'authenticateWithBiometrics', args);
+    } else {
+      try {
+        return await _channel.invokeMethod<bool>(
+            'authenticateWithBiometrics', args);
+      } on PlatformException catch (e) {
+        if (e.code == "-2000" || e.code == "-3000" || e.code == "-4000") {
+          onPositiveCallback(int.parse(e.code));
+        } else {
+          throw PlatformException(
+              code: e.code, message: e.message, details: e.details);
+        }
+        return Future.value(false);
+      }
+    }
   }
 
   /// Returns true if auth was cancelled successfully.
