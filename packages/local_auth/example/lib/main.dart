@@ -65,8 +65,9 @@ class _MyAppState extends State<MyApp> {
           localizedReason: 'Scan your fingerprint to authenticate',
           useErrorDialogs: true,
           stickyAuth: true,
-          onPositiveCallback: (val) {
-            print(val);
+          onPositiveCallback: () {
+
+            print("========");
           });
       setState(() {
         _isAuthenticating = false;
