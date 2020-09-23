@@ -68,14 +68,13 @@ class LocalAuthentication {
   /// [PlatformException] with error code [otherOperatingSystem] on the iOS
   /// simulator.
   /// callbackValue [onPositiveCallback] -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付
-  Future<bool> authenticateWithBiometrics({
+  Future<int> authenticateWithBiometrics({
     @required String localizedReason,
     bool useErrorDialogs = true,
     bool stickyAuth = false,
     AndroidAuthMessages androidAuthStrings = const AndroidAuthMessages(),
     IOSAuthMessages iOSAuthStrings = const IOSAuthMessages(),
     bool sensitiveTransaction = true,
-    ValueChanged<int> onPositiveCallback,
   }) async {
     assert(localizedReason != null);
     final Map<String, dynamic> args = <String, dynamic>{
@@ -98,21 +97,14 @@ class LocalAuthentication {
 
     if (_platform.isIOS) {
       return await _channel.invokeMethod<bool>(
-          'authenticateWithBiometrics', args);
+          'authenticateWithBiometrics', args) ? 1 : 0;
     } else {
       try {
         final one = await _channel.invokeMethod<int>(
             'authenticateWithBiometrics', args);
-
-        if (one == 1) {
-          return true;
-        } else if (one == -4000 || one == -3000 || one == -2000) {
-          onPositiveCallback(one);
-          return false;
-        }
+        return one;
       } on PlatformException catch (e) {
         print("${e}");
-        return false;
       }
     }
   }
