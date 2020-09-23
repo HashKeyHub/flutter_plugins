@@ -98,6 +98,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         FingerPrintManager finger = new FingerPrintManager(call, activity, new FingerPrintCallback() {
             @Override
             public void onPositive() {
+
                 completionHandler.onError("-4000", "密码支付");
             }
 
