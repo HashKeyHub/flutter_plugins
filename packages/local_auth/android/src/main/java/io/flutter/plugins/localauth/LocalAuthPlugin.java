@@ -103,7 +103,7 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
                                 @Override
                                 public void onSuccess() {
                                     if (authInProgress.compareAndSet(true, false)) {
-                                        result.success(true);
+                                        result.success(1);
                                     }
                                 }
 
@@ -116,10 +116,8 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
 
                                 @Override
                                 public void onError(String code, String error) {
-
                                     if (authInProgress.compareAndSet(true, false)) {
-
-                                        result.error(code, error, error);
+                                        result.success(Integer.parseInt(code));
                                     }
                                 }
                             });

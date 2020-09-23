@@ -67,7 +67,7 @@ class _MyAppState extends State<MyApp> {
             useErrorDialogs: true,
             stickyAuth: true);
 
-    } on PlatformException catch (e) {
+    } catch (e) {
       print(e);
     }
     if (!mounted) return;

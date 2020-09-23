@@ -100,12 +100,18 @@ class LocalAuthentication {
           'authenticateWithBiometrics', args);
     } else {
       try {
-        return await _channel.invokeMethod<bool>(
+        final one = await _channel.invokeMethod<int>(
             'authenticateWithBiometrics', args);
-      } on PlatformException catch (e) {
-        throw PlatformException(
-            code: e.code, message: e.message, details: e.details);
 
+        if (one == 1) {
+          return true;
+        } else if (one == -4000) {
+          print("密码支付哈哈哈哈哈哈");
+
+          return false;
+        }
+      } on PlatformException catch (e) {
+        print("${e}");
       }
     }
   }
