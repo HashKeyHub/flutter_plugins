@@ -87,8 +87,6 @@ class FingerPrintForM constructor(
                         fingerprintDialog?.tips?.text = call.argument<String>("failures")
                         fingerPrintCallback?.onError(errString.toString())
                     }
-
-
                 }
 
                 override fun onAuthenticationFailed() {

@@ -75,7 +75,6 @@ class LocalAuthentication {
     AndroidAuthMessages androidAuthStrings = const AndroidAuthMessages(),
     IOSAuthMessages iOSAuthStrings = const IOSAuthMessages(),
     bool sensitiveTransaction = true,
-    VoidCallback onPositiveCallback,
   }) async {
     assert(localizedReason != null);
     final Map<String, dynamic> args = <String, dynamic>{
@@ -104,13 +103,9 @@ class LocalAuthentication {
         return await _channel.invokeMethod<bool>(
             'authenticateWithBiometrics', args);
       } on PlatformException catch (e) {
-        if ( e.code == "-4000") {
-          onPositiveCallback();
-        } else {
-          throw PlatformException(
-              code: e.code, message: e.message, details: e.details);
-        }
-        return Future.value(false);
+        throw PlatformException(
+            code: e.code, message: e.message, details: e.details);
+
       }
     }
   }
