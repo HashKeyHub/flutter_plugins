@@ -75,6 +75,7 @@ class LocalAuthentication {
     AndroidAuthMessages androidAuthStrings = const AndroidAuthMessages(),
     IOSAuthMessages iOSAuthStrings = const IOSAuthMessages(),
     bool sensitiveTransaction = true,
+    ValueChanged<int> onPositiveCallback,
   }) async {
     assert(localizedReason != null);
     final Map<String, dynamic> args = <String, dynamic>{
@@ -105,13 +106,13 @@ class LocalAuthentication {
 
         if (one == 1) {
           return true;
-        } else if (one == -4000) {
-          print("密码支付哈哈哈哈哈哈");
-
+        } else if (one == -4000 || one == -3000 || one == -2000) {
+          onPositiveCallback(one);
           return false;
         }
       } on PlatformException catch (e) {
         print("${e}");
+        return false;
       }
     }
   }
