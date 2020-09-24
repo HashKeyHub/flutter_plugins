@@ -4,7 +4,7 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 
 #import "FLTLocalAuthPlugin.h"
-#import "local_auth-Swift.h"
+#import <local_auth-Swift.h>
 
 @interface FLTLocalAuthPlugin ()
 @property(copy, nullable) NSDictionary<NSString *, NSNumber *> *lastCallArgs;
