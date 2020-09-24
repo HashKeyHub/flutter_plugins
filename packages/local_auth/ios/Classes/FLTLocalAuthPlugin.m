@@ -4,7 +4,7 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 
 #import "FLTLocalAuthPlugin.h"
-#import <local_auth-Swift.h>
+#import "Biology.h"
 
 @interface FLTLocalAuthPlugin ()
 @property(copy, nullable) NSDictionary<NSString *, NSNumber *> *lastCallArgs;
@@ -20,6 +20,8 @@
     FLTLocalAuthPlugin *instance = [[FLTLocalAuthPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
     [registrar addApplicationDelegate:instance];
+    
+    
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -58,6 +60,7 @@
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
                  withFlutterResult:(FlutterResult)result {
     
+    
     NSString *title1 = @" ";
     
     NSString *title2 = @" ";
@@ -80,17 +83,16 @@
         tips = arguments[@"touchTips"];
     }
     
-    NSNumber *sensitiveTransaction = (NSNumber *)arguments[@"sensitiveTransaction"];
-        
-    [Biology biologyUnLockWithTip:tips sensitiveTransaction:sensitiveTransaction.intValue negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"] unLockSuccess:^{
+    [Biology biologyUnLockTips:tips negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"] unLockSuccess:^{
         result(@(1));
-    } unLockFail:^(NSInteger code) {
+        
+    } unLockFail:^(NSInteger code)  {
+        
         switch (code) {
             case LAErrorPasscodeNotSet:
             case LAErrorTouchIDNotAvailable:
             case LAErrorTouchIDNotEnrolled:
             case LAErrorTouchIDLockout:
-                
                 break;
             case LAErrorSystemCancel:
                 self.lastCallArgs = arguments;
@@ -99,8 +101,8 @@
             default:
                 break;
         }
+    } unLockError:^(NSInteger code)  {
         
-    } unLockError:^(NSInteger code) {
         switch (code) {
             case -2:
             {
@@ -110,28 +112,28 @@
             }
             case -5 :
             {
-                [Biology setBiologyshouldOpenWithTitle2:title2 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"] onNegative:^{
+                [Biology setBiologyshouldOpenTitle2:title2 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
                     result(@(-1000));
                 }];
-
+                
                 break;
             }
             case -6 :
             {
-                [Biology setBiologyOkWithTitle1:title1 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"] onPositive:^{
-                    // 去设置开启权限
-                    result(@(-5000));
-                } onNegative:^{
+                [Biology setBiologyOkTitle1:title1 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"goSetting"] onNegative:^{
                     // 取消
                     result(@(-1000));
+                } onPositive:^{
+                    // 去设置开启权限
+                    result(@(-5000));
                 }];
+                
                 break;
             }
             case -7 :
             {
                 
-                [Biology setBiologyshouldOpenWithTitle2:title2 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"]  onNegative:^{
-                    // 取消
+                [Biology setBiologyshouldOpenTitle2:title2 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
                     result(@(-1000));
                 }];
                 
@@ -139,11 +141,13 @@
             }
             case -8 :
             {
-                [Biology biologyOutWithTitle3:title3 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onPositive:^{
+                [Biology biologyOutTitle3:title3 negativeBtn: arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onNegative:^{
+                    /// 取消
+                    result(@(-1000));
+                    
+                } onPositive:^{
                     // 密码支付
                     result(@(-4000));
-                } onNegative:^{
-                    result(@(-1000));
                 }];
                 break;
             }
