@@ -17,6 +17,7 @@ import 'package:platform/platform.dart';
 
 import 'auth_strings.dart';
 import 'error_codes.dart';
+import 'auth_type.dart';
 
 enum BiometricType { face, fingerprint, iris }
 
@@ -67,22 +68,17 @@ class LocalAuthentication {
   /// authentication (e.g. lack of relevant hardware). This might throw
   /// [PlatformException] with error code [otherOperatingSystem] on the iOS
   /// simulator.
-  /// callbackValue [onPositiveCallback] -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付
-  Future<int> authenticateWithBiometrics({
-    @required String localizedReason,
-    bool useErrorDialogs = true,
-    bool stickyAuth = false,
+  /// callbackValue [onPositiveCallback]  -1000 -> 取消 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
+  // ignore: missing_return
+  Future<AuthType> authenticateWithBiometrics({
     AndroidAuthMessages androidAuthStrings = const AndroidAuthMessages(),
     IOSAuthMessages iOSAuthStrings = const IOSAuthMessages(),
-    bool sensitiveTransaction = true,
-    ValueChanged<int> onPositiveCallback,
+
+    /// 是否需要positiveBtn
+    bool sensitiveTransaction = false,
   }) async {
-    assert(localizedReason != null);
     final Map<String, dynamic> args = <String, dynamic>{
-      'localizedReason': localizedReason,
-      'useErrorDialogs': useErrorDialogs,
-      'stickyAuth': stickyAuth,
-      'sensitiveTransaction': sensitiveTransaction,
+      'sensitiveTransaction': sensitiveTransaction ? 1 : 0,
     };
     if (_platform.isIOS) {
       args.addAll(iOSAuthStrings.args);
@@ -95,30 +91,35 @@ class LocalAuthentication {
               'operating systems.',
           details: 'Your operating system is ${_platform.operatingSystem}');
     }
-
-    if (_platform.isIOS) {
-      return await _channel.invokeMethod<bool>(
-              'authenticateWithBiometrics', args)
-          ? 1
-          : 0;
-    } else {
-      try {
-        final one = await _channel.invokeMethod<int>(
-            'authenticateWithBiometrics', args);
-
-        if (one == 1) {
-          onPositiveCallback(1);
-          return 1;
-        } else if (one == -4000 || one == -3000 || one == -2000) {
-          onPositiveCallback(one);
-          return one;
-        } else {
-          return one;
-        }
-      } on PlatformException catch (e) {
-        print("${e}");
-        return 0;
+    try {
+      final one =
+          await _channel.invokeMethod<int>('authenticateWithBiometrics', args);
+      switch (one) {
+        case 0:
+          return AuthType.failure;
+          break;
+        case 1:
+          return AuthType.success;
+          break;
+        case -1000:
+          return AuthType.negative;
+          break;
+        case -2000:
+          return AuthType.notSupport;
+          break;
+        case -3000:
+          return AuthType.notSetting;
+          break;
+        case -4000:
+          return AuthType.payPassword;
+          break;
+        case -5000:
+          return AuthType.goOpen;
+          break;
       }
+    } on PlatformException catch (e) {
+      print("${e}");
+      return AuthType.failure;
     }
   }
 

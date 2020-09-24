@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth/auth_type.dart';
 
 void main() {
   runApp(MyApp());
@@ -62,10 +63,10 @@ class _MyAppState extends State<MyApp> {
         _authorized = 'Authenticating';
       });
 
-     await auth.authenticateWithBiometrics(
-            localizedReason: 'Scan your fingerprint to authenticate',
-            useErrorDialogs: true,
-            stickyAuth: true);
+    final value = await auth.authenticateWithBiometrics(sensitiveTransaction: false);
+
+
+
 
     } catch (e) {
       print(e);

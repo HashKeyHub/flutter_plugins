@@ -1,4 +1,5 @@
 name: local_auth_example
+version: 1.0.0
 description: Demonstrates how to use the local_auth plugin.
 
 dependencies:

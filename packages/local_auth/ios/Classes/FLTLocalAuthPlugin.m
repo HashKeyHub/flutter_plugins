@@ -4,6 +4,7 @@
 #import <LocalAuthentication/LocalAuthentication.h>
 
 #import "FLTLocalAuthPlugin.h"
+#import "local_auth-Swift.h"
 
 @interface FLTLocalAuthPlugin ()
 @property(copy, nullable) NSDictionary<NSString *, NSNumber *> *lastCallArgs;
@@ -13,157 +14,153 @@
 @implementation FLTLocalAuthPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/local_auth"
-                                  binaryMessenger:[registrar messenger]];
-  FLTLocalAuthPlugin *instance = [[FLTLocalAuthPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
-  [registrar addApplicationDelegate:instance];
+    FlutterMethodChannel *channel =
+    [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/local_auth"
+                                binaryMessenger:[registrar messenger]];
+    FLTLocalAuthPlugin *instance = [[FLTLocalAuthPlugin alloc] init];
+    [registrar addMethodCallDelegate:instance channel:channel];
+    [registrar addApplicationDelegate:instance];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"authenticateWithBiometrics" isEqualToString:call.method]) {
-    [self authenticateWithBiometrics:call.arguments withFlutterResult:result];
-  } else if ([@"getAvailableBiometrics" isEqualToString:call.method]) {
-    [self getAvailableBiometrics:result];
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
-}
-
-#pragma mark Private Methods
-
-- (void)alertMessage:(NSString *)message
-         firstButton:(NSString *)firstButton
-       flutterResult:(FlutterResult)result
-    additionalButton:(NSString *)secondButton {
-  UIAlertController *alert =
-      [UIAlertController alertControllerWithTitle:@""
-                                          message:message
-                                   preferredStyle:UIAlertControllerStyleAlert];
-
-  UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:firstButton
-                                                          style:UIAlertActionStyleDefault
-                                                        handler:^(UIAlertAction *action) {
-                                                          result(@NO);
-                                                        }];
-
-  [alert addAction:defaultAction];
-  if (secondButton != nil) {
-    UIAlertAction *additionalAction = [UIAlertAction
-        actionWithTitle:secondButton
-                  style:UIAlertActionStyleDefault
-                handler:^(UIAlertAction *action) {
-                  if (UIApplicationOpenSettingsURLString != NULL) {
-                    NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-                    [[UIApplication sharedApplication] openURL:url];
-                    result(@NO);
-                  }
-                }];
-    [alert addAction:additionalAction];
-  }
-  [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:alert
-                                                                                     animated:YES
-                                                                                   completion:nil];
+    if ([@"authenticateWithBiometrics" isEqualToString:call.method]) {
+        [self authenticateWithBiometrics:call.arguments withFlutterResult:result];
+    } else if ([@"getAvailableBiometrics" isEqualToString:call.method]) {
+        [self getAvailableBiometrics:result];
+    } else {
+        result(FlutterMethodNotImplemented);
+    }
 }
 
 - (void)getAvailableBiometrics:(FlutterResult)result {
-  LAContext *context = [[LAContext alloc] init];
-  NSError *authError = nil;
-  NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
-  if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
-                           error:&authError]) {
-    if (authError == nil) {
-      if (@available(iOS 11.0.1, *)) {
-        if (context.biometryType == LABiometryTypeFaceID) {
-          [biometrics addObject:@"face"];
-        } else if (context.biometryType == LABiometryTypeTouchID) {
-          [biometrics addObject:@"fingerprint"];
+    LAContext *context = [[LAContext alloc] init];
+    NSError *authError = nil;
+    NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
+    if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
+                             error:&authError]) {
+        if (authError == nil) {
+            if (@available(iOS 11.0.1, *)) {
+                if (context.biometryType == LABiometryTypeFaceID) {
+                    [biometrics addObject:@"face"];
+                } else if (context.biometryType == LABiometryTypeTouchID) {
+                    [biometrics addObject:@"fingerprint"];
+                }
+            } else {
+                [biometrics addObject:@"fingerprint"];
+            }
         }
-      } else {
-        [biometrics addObject:@"fingerprint"];
-      }
+    } else if (authError.code == LAErrorTouchIDNotEnrolled) {
+        [biometrics addObject:@"undefined"];
     }
-  } else if (authError.code == LAErrorTouchIDNotEnrolled) {
-    [biometrics addObject:@"undefined"];
-  }
-  result(biometrics);
+    result(biometrics);
 }
 
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
                  withFlutterResult:(FlutterResult)result {
-  LAContext *context = [[LAContext alloc] init];
-  NSError *authError = nil;
-  self.lastCallArgs = nil;
-  self.lastResult = nil;
-  context.localizedFallbackTitle = @"";
+    
+    NSString *title1 = @" ";
+    
+    NSString *title2 = @" ";
+    
+    NSString *title3 = @" ";
+    
+    NSString *tips = @" ";
+    
+    if ([Biology getWhitchBiology] == 2) {
+        
+        title1 = arguments[@"faceLimit"];
+        title2 = arguments[@"faceSetting"];
+        title3 = arguments[@"faceFailures"];
+        tips = arguments[@"faceTips"];
+    }
+    else if ([Biology getWhitchBiology] == 1) {
+        title1 = arguments[@"touchLimit"];
+        title2 = arguments[@"touchSetting"];
+        title3 = arguments[@"touchFailures"];
+        tips = arguments[@"touchTips"];
+    }
+    
+    NSNumber *sensitiveTransaction = (NSNumber *)arguments[@"sensitiveTransaction"];
+        
+    [Biology biologyUnLockWithTip:tips sensitiveTransaction:sensitiveTransaction.intValue negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"] unLockSuccess:^{
+        result(@(1));
+    } unLockFail:^(NSInteger code) {
+        switch (code) {
+            case LAErrorPasscodeNotSet:
+            case LAErrorTouchIDNotAvailable:
+            case LAErrorTouchIDNotEnrolled:
+            case LAErrorTouchIDLockout:
+                
+                break;
+            case LAErrorSystemCancel:
+                self.lastCallArgs = arguments;
+                self.lastResult = result;
+                break;
+            default:
+                break;
+        }
+        
+    } unLockError:^(NSInteger code) {
+        switch (code) {
+            case -2:
+            {
+                /// 取消
+                result(@(-1000));
+                break;
+            }
+            case -5 :
+            {
+                [Biology setBiologyshouldOpenWithTitle2:title2 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"] onNegative:^{
+                    result(@(-1000));
+                }];
 
-  if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
-                           error:&authError]) {
-    [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
-            localizedReason:arguments[@"localizedReason"]
-                      reply:^(BOOL success, NSError *error) {
-                        if (success) {
-                          result(@YES);
-                        } else {
-                          switch (error.code) {
-                            case LAErrorPasscodeNotSet:
-                            case LAErrorTouchIDNotAvailable:
-                            case LAErrorTouchIDNotEnrolled:
-                            case LAErrorTouchIDLockout:
-                              [self handleErrors:error
-                                   flutterArguments:arguments
-                                  withFlutterResult:result];
-                              return;
-                            case LAErrorSystemCancel:
-                              if ([arguments[@"stickyAuth"] boolValue]) {
-                                self.lastCallArgs = arguments;
-                                self.lastResult = result;
-                                return;
-                              }
-                          }
-                          result(@NO);
-                        }
-                      }];
-  } else {
-    [self handleErrors:authError flutterArguments:arguments withFlutterResult:result];
-  }
+                break;
+            }
+            case -6 :
+            {
+                [Biology setBiologyOkWithTitle1:title1 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"] onPositive:^{
+                    // 去设置开启权限
+                    result(@(-5000));
+                } onNegative:^{
+                    // 取消
+                    result(@(-1000));
+                }];
+                break;
+            }
+            case -7 :
+            {
+                
+                [Biology setBiologyshouldOpenWithTitle2:title2 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"]  onNegative:^{
+                    // 取消
+                    result(@(-1000));
+                }];
+                
+                break;
+            }
+            case -8 :
+            {
+                [Biology biologyOutWithTitle3:title3 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onPositive:^{
+                    // 密码支付
+                    result(@(-4000));
+                } onNegative:^{
+                    result(@(-1000));
+                }];
+                break;
+            }
+            default :
+                break;
+        }
+    }];
 }
 
-- (void)handleErrors:(NSError *)authError
-     flutterArguments:(NSDictionary *)arguments
-    withFlutterResult:(FlutterResult)result {
-  NSString *errorCode = @"NotAvailable";
-  switch (authError.code) {
-    case LAErrorPasscodeNotSet:
-    case LAErrorTouchIDNotEnrolled:
-      if ([arguments[@"useErrorDialogs"] boolValue]) {
-        [self alertMessage:arguments[@"goToSettingDescriptionIOS"]
-                 firstButton:arguments[@"okButton"]
-               flutterResult:result
-            additionalButton:arguments[@"goToSetting"]];
-        return;
-      }
-      errorCode = authError.code == LAErrorPasscodeNotSet ? @"PasscodeNotSet" : @"NotEnrolled";
-      break;
-    case LAErrorTouchIDLockout:
-      [self alertMessage:arguments[@"lockOut"]
-               firstButton:arguments[@"okButton"]
-             flutterResult:result
-          additionalButton:nil];
-      return;
-  }
-  result([FlutterError errorWithCode:errorCode
-                             message:authError.localizedDescription
-                             details:authError.domain]);
-}
+//  -1000 -> 取消 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
 
 #pragma mark - AppDelegate
-
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-  if (self.lastCallArgs != nil && self.lastResult != nil) {
-    [self authenticateWithBiometrics:_lastCallArgs withFlutterResult:self.lastResult];
-  }
+    if (self.lastCallArgs != nil && self.lastResult != nil) {
+        [self authenticateWithBiometrics:_lastCallArgs withFlutterResult:self.lastResult];
+    }
 }
 
 @end
+

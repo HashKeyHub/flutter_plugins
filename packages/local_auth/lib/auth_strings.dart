@@ -8,19 +8,15 @@
 // should be deleted and the failing lints addressed as soon as possible.
 // ignore_for_file: public_member_api_docs
 
-import 'package:intl/intl.dart';
-
-/// Android side authentication messages.
-///
-/// Provides default values for all messages.
 class AndroidAuthMessages {
-  const AndroidAuthMessages(
-      {this.tips,
-      this.notRecognized,
-      this.failures,
-      this.success,
-      this.negativeBtn,
-      this.positiveBtn});
+  const AndroidAuthMessages({
+    this.tips,
+    this.notRecognized,
+    this.failures,
+    this.success,
+    this.negativeBtn,
+    this.positiveBtn,
+  });
 
   /// 指纹识别提示
   final String tips;
@@ -57,84 +53,70 @@ class AndroidAuthMessages {
 /// Provides default values for all messages.
 class IOSAuthMessages {
   const IOSAuthMessages({
-    this.lockOut,
-    this.goToSettingsButton,
-    this.goToSettingsDescription,
-    this.cancelButton,
+    this.faceLimit,
+    this.faceSetting,
+    this.faceFailures,
+    this.faceTips,
+    this.touchLimit,
+    this.touchSetting,
+    this.touchFailures,
+    this.touchTips,
+    this.negativeBtn,
+    this.positiveBtn,
+    this.payPassword,
+    this.goSetting,
   });
 
-  final String lockOut;
-  final String goToSettingsButton;
-  final String goToSettingsDescription;
-  final String cancelButton;
+  /// face 开启权限提示
+  final String faceLimit;
+
+  /// face 设置权限提示
+  final String faceSetting;
+
+  /// face 超出尝试次数
+  final String faceFailures;
+
+  /// face 超出尝试次数
+  final String faceTips;
+
+  /// touch 开启权限提示
+  final String touchLimit;
+
+  /// touch 设置权限提示
+  final String touchSetting;
+
+  /// touch 超出尝试次数
+  final String touchFailures;
+
+  /// touch 超出尝试次数
+  final String touchTips;
+
+  /// 取消按钮
+  final String negativeBtn;
+
+  /// 密码解锁
+  final String positiveBtn;
+
+  /// 使用密码支付
+  final String payPassword;
+
+  /// 开启权限
+  final String goSetting;
 
   Map<String, String> get args {
     return <String, String>{
-      'lockOut': lockOut ?? iOSLockOut,
-      'goToSetting': goToSettingsButton ?? goToSettings,
-      'goToSettingDescriptionIOS':
-          goToSettingsDescription ?? iOSGoToSettingsDescription,
-      'okButton': cancelButton ?? iOSOkButton,
+      'faceLimit': faceLimit ?? "开启面容ID权限才能使用解锁哦",
+      'faceSetting': faceSetting ?? "系统没有面容ID信息，请先开启系统面容ID服务",
+      'faceFailures': faceFailures ?? "超出面容 ID 尝试次数",
+      'faceTips': faceTips ?? "多次验证不通过，请稍后再试",
+      'touchLimit': touchLimit ?? "开启指纹ID权限才能使用解锁哦",
+      'touchSetting': touchSetting ?? "系统没有指纹ID信息，请先开启系统指纹ID服务",
+      'touchFailures': touchFailures ?? "超出指纹 ID 尝试次数",
+      'touchTips': touchTips ?? "通过Home键验证已有指纹",
+      'negativeBtn': negativeBtn ?? "取消",
+      'positiveBtn': positiveBtn ?? "输入密码",
+      'payPassword': payPassword ?? "密码支付",
+      'goSetting': goSetting ?? "去开启"
     };
   }
 }
-
-// Strings for local_authentication plugin. Currently supports English.
-// Intl.message must be string literals.
-String get androidFingerprintHint => Intl.message('Touch sensor',
-    desc: 'Hint message advising the user how to scan their fingerprint. It is '
-        'used on Android side. Maximum 60 characters.');
-
-String get androidFingerprintNotRecognized =>
-    Intl.message('Fingerprint not recognized. Try again.',
-        desc: 'Message to let the user know that authentication was failed. It '
-            'is used on Android side. Maximum 60 characters.');
-
-String get androidFingerprintSuccess => Intl.message('Fingerprint recognized.',
-    desc: 'Message to let the user know that authentication was successful. It '
-        'is used on Android side. Maximum 60 characters.');
-
-String get androidCancelButton => Intl.message('Cancel',
-    desc: 'Message showed on a button that the user can click to leave the '
-        'current dialog. It is used on Android side. Maximum 30 characters.');
-
-String get androidSignInTitle => Intl.message('Fingerprint Authentication',
-    desc: 'Message showed as a title in a dialog which indicates the user '
-        'that they need to scan fingerprint to continue. It is used on '
-        'Android side. Maximum 60 characters.');
-
-String get androidFingerprintRequiredTitle {
-  return Intl.message('Fingerprint required',
-      desc: 'Message showed as a title in a dialog which indicates the user '
-          'fingerprint is not set up yet on their device. It is used on Android'
-          ' side. Maximum 60 characters.');
-}
-
-String get goToSettings => Intl.message('Go to settings',
-    desc: 'Message showed on a button that the user can click to go to '
-        'settings pages from the current dialog. It is used on both Android '
-        'and iOS side. Maximum 30 characters.');
-
-String get androidGoToSettingsDescription => Intl.message(
-    'Fingerprint is not set up on your device. Go to '
-    '\'Settings > Security\' to add your fingerprint.',
-    desc: 'Message advising the user to go to the settings and configure '
-        'fingerprint on their device. It shows in a dialog on Android side.');
-
-String get iOSLockOut => Intl.message(
-    'Biometric authentication is disabled. Please lock and unlock your screen to '
-    'enable it.',
-    desc:
-        'Message advising the user to re-enable biometrics on their device. It '
-        'shows in a dialog on iOS side.');
-
-String get iOSGoToSettingsDescription => Intl.message(
-    'Biometric authentication is not set up on your device. Please either enable '
-    'Touch ID or Face ID on your phone.',
-    desc:
-        'Message advising the user to go to the settings and configure Biometrics '
-        'for their device. It shows in a dialog on iOS side.');
-
-String get iOSOkButton => Intl.message('OK',
-    desc: 'Message showed on a button that the user can click to leave the '
-        'current dialog. It is used on iOS side. Maximum 30 characters.');
