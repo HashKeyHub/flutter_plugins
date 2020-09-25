@@ -34,6 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware {
     private static final String CHANNEL_NAME = "plugins.flutter.io/local_auth";
 
+
+
     private Activity activity;
     private final AtomicBoolean authInProgress = new AtomicBoolean(false);
     private AuthenticationHelper authenticationHelper;
@@ -109,6 +111,7 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
 
                                 @Override
                                 public void onFailure() {
+//                                    authInProgress.compareAndSet(false, false);
 //                                    if (authInProgress.get()) {
 //                                        result.success(false);
 //                                    }

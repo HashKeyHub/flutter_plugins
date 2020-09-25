@@ -75,7 +75,6 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
     private final FragmentActivity activity;
     private final AuthCompletionHandler completionHandler;
     private final MethodCall call;
-    private final boolean isAuthSticky;
     private boolean activityPaused = false;
 
     AuthenticationHelper(
@@ -87,7 +86,6 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         this.activity = activity;
         this.call = call;
         this.completionHandler = completionHandler;
-        this.isAuthSticky = call.argument("stickyAuth");
     }
 
     /**
@@ -147,9 +145,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
      */
     @Override
     public void onActivityPaused(Activity ignored) {
-        if (isAuthSticky) {
-            activityPaused = true;
-        }
+
     }
 
     @Override
