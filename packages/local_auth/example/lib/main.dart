@@ -63,11 +63,13 @@ class _MyAppState extends State<MyApp> {
         _authorized = 'Authenticating';
       });
 
-    final value = await auth.authenticateWithBiometrics(sensitiveTransaction: false);
+      final value = await auth.authenticateWithBiometrics();
 
-
-
-
+      if (value == AuthType.success) {
+        print("认证结果=成功}");
+      } else {
+        print("其他状态");
+      }
     } catch (e) {
       print(e);
     }

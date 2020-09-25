@@ -98,6 +98,9 @@
                 self.lastCallArgs = arguments;
                 self.lastResult = result;
                 break;
+            case LAErrorUserCancel:
+                result(@(-1000));
+                break;
             default:
                 break;
         }
