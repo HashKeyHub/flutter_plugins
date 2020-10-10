@@ -68,7 +68,7 @@ class LocalAuthentication {
   /// authentication (e.g. lack of relevant hardware). This might throw
   /// [PlatformException] with error code [otherOperatingSystem] on the iOS
   /// simulator.
-  /// callbackValue [onPositiveCallback]  -1000 -> 取消 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
+  /// callbackValue [onPositiveCallback]  -1000 -> 取消 -1001->失败 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
   // ignore: missing_return
   Future<AuthType> authenticateWithBiometrics({
     AndroidAuthMessages androidAuthStrings = const AndroidAuthMessages(),

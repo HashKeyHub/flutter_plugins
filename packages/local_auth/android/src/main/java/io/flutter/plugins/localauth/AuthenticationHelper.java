@@ -115,12 +115,12 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
 
             @Override
             public void onFailed() {
-                completionHandler.onFailure();
+                completionHandler.onError("-1001", "失败");
             }
 
             @Override
             public void onCancel() {
-                completionHandler.onFailure();
+                completionHandler.onError("-2000", "取消");
             }
 
             @Override

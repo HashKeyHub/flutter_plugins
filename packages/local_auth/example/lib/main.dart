@@ -58,16 +58,19 @@ class _MyAppState extends State<MyApp> {
   Future<void> _authenticate() async {
     bool authenticated = false;
     try {
-      setState(() {
-        _isAuthenticating = true;
-        _authorized = 'Authenticating';
-      });
-
       final value = await auth.authenticateWithBiometrics();
 
       if (value == AuthType.success) {
         print("认证结果=成功}");
+
+        setState(() {
+          _isAuthenticating = true;
+        });
       } else {
+        setState(() {
+          _isAuthenticating = false;
+        });
+
         print("其他状态");
       }
     } catch (e) {

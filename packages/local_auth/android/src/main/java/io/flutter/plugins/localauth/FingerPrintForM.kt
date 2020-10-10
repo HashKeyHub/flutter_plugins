@@ -49,13 +49,11 @@ class FingerPrintForM constructor(
     /**
      * 取消标识
      */
-    private val cancellationSignal by lazy {
-        CancellationSignal().apply {
-            setOnCancelListener {
+//    private val cancellationSignal by lazy {
+//        CancellationSignal()
+//    }
 
-            }
-        }
-    }
+    private val cancellationSignal: CancellationSignal = CancellationSignal();
 
     override fun authenticate() {
 
@@ -63,15 +61,15 @@ class FingerPrintForM constructor(
 
             onCancelListener = object : FingerPrintDialog.OnCancelListener {
                 override fun onCancel(dialog: Dialog) {
-                    fingerPrintCallback.onCancel()
                     cancellationSignal.cancel()
+                    fingerPrintCallback.onCancel()
                 }
             }
 
             onPositiveBtnListener = object : FingerPrintDialog.OnPositiveBtnListener {
                 override fun onPositive(dialog: Dialog) {
-                    fingerPrintCallback.onPositive()
                     cancellationSignal.cancel()
+                    fingerPrintCallback.onPositive()
                 }
             }
         }

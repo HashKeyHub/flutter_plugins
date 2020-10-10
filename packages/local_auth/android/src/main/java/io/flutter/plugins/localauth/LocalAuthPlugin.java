@@ -11,6 +11,7 @@ import android.os.Build;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 
+import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -111,6 +112,7 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
 
                                 @Override
                                 public void onFailure() {
+                                    Log.d("VVV","失败");
 //                                    authInProgress.compareAndSet(false, false);
 //                                    if (authInProgress.get()) {
 //                                        result.success(false);
