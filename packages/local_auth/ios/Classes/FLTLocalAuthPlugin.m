@@ -2,25 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #import <LocalAuthentication/LocalAuthentication.h>
-
 #import "FLTLocalAuthPlugin.h"
 #import "Biology.h"
+// callbackValue [onPositiveCallback]  -1000 -> 取消 -1001->失败  -1002->多次失败 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
 
-@interface FLTLocalAuthPlugin ()
+@interface FLTLocalAuthPlugin ()<FlutterStreamHandler>
 @property(copy, nullable) NSDictionary<NSString *, NSNumber *> *lastCallArgs;
 @property(nullable) FlutterResult lastResult;
+@property(nonatomic,strong)FlutterEventSink eventSink;
 @end
 
 @implementation FLTLocalAuthPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+    
     FlutterMethodChannel *channel =
     [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/local_auth"
                                 binaryMessenger:[registrar messenger]];
     FLTLocalAuthPlugin *instance = [[FLTLocalAuthPlugin alloc] init];
-    [registrar addMethodCallDelegate:instance channel:channel];
-    [registrar addApplicationDelegate:instance];
     
+    [registrar addMethodCallDelegate:instance channel:channel];
+    FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"plugins.flutter.io.event/local_auth" binaryMessenger:[registrar messenger]];
+    [eventChannel setStreamHandler:instance];
     
 }
 
@@ -59,7 +62,28 @@
 
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
                  withFlutterResult:(FlutterResult)result {
+    result(@(1000000));
+    NSString *tips = @" ";
+    if ([Biology getWhitchBiology] == 2) {
+        tips = arguments[@"faceTips"];
+        
+    }
+    else if ([Biology getWhitchBiology] == 1) {
+        tips = arguments[@"touchTips"];
+    }
     
+    NSInteger sensitiveTransaction = ((NSNumber *)arguments[@"sensitiveTransaction"]).intValue;
+    NSString *btn = sensitiveTransaction == 0 ? arguments[@"positiveBtn"] : arguments[@"payPassword"];
+    [Biology biologyUnLockTips:tips negativeBtn:arguments[@"negativeBtn"] positiveBtn:btn sensitiveTransaction:sensitiveTransaction unLockSuccess:^{
+        self.eventSink(@(1));
+    } unLockFail:^(NSInteger code)  {
+        [self event:code biometrics:arguments flutterResult:result];
+    } unLockError:^(NSInteger code)  {
+        [self event:code biometrics:arguments flutterResult:result];
+    }];
+}
+
+-(void)event:(NSInteger)code biometrics:(NSDictionary *)arguments flutterResult:(FlutterResult)result{
     
     NSString *title1 = @" ";
     
@@ -83,90 +107,71 @@
         tips = arguments[@"touchTips"];
     }
     
-    [Biology biologyUnLockTips:tips negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"positiveBtn"] unLockSuccess:^{
-        result(@(1));
-        
-    } unLockFail:^(NSInteger code)  {
-        
-        switch (code) {
-            case LAErrorPasscodeNotSet:
-            case LAErrorTouchIDNotAvailable:
-            case LAErrorTouchIDNotEnrolled:
-            case LAErrorTouchIDLockout:
-                break;
-            case LAErrorSystemCancel:
-                self.lastCallArgs = arguments;
-                self.lastResult = result;
-                break;
-            case LAErrorUserCancel:
-                result(@(-1000));
-                break;
-            default:
-                break;
+    switch (code) {
+        case LAErrorUserFallback:
+        {
+            self.eventSink(@(-4000));
+            break;
         }
-    } unLockError:^(NSInteger code)  {
-        
-        switch (code) {
-            case -2:
-            {
+        case LAErrorPasscodeNotSet:
+        {
+            [Biology setBiologyshouldOpenTitle2:title2 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
+                self.eventSink(@(-1000));
+            }];
+            break;
+        }
+        case LAErrorTouchIDNotAvailable:
+        {
+            [Biology setBiologyOkTitle1:title1 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"goSetting"] onNegative:^{
+                // 取消
+                self.eventSink(@(-1000));
+            } onPositive:^{
+                // 去设置开启权限
+                self.eventSink(@(-5000));
+            }];
+            break;
+        }
+        case LAErrorTouchIDNotEnrolled:
+        {
+            [Biology setBiologyshouldOpenTitle2:title2 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
+                self.eventSink(@(-1000));
+            }];
+            break;
+        }
+        case LAErrorTouchIDLockout:
+        {
+            [Biology biologyOutTitle3:title3 negativeBtn: arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onNegative:^{
                 /// 取消
-                result(@(-1000));
-                break;
-            }
-            case -5 :
-            {
-                [Biology setBiologyshouldOpenTitle2:title2 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
-                    result(@(-1000));
-                }];
-                
-                break;
-            }
-            case -6 :
-            {
-                [Biology setBiologyOkTitle1:title1 negativeBtn:arguments[@"negativeBtn"] positiveBtn:arguments[@"goSetting"] onNegative:^{
-                    // 取消
-                    result(@(-1000));
-                } onPositive:^{
-                    // 去设置开启权限
-                    result(@(-5000));
-                }];
-                
-                break;
-            }
-            case -7 :
-            {
-                
-                [Biology setBiologyshouldOpenTitle2:title2 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
-                    result(@(-1000));
-                }];
-                
-                break;
-            }
-            case -8 :
-            {
-                [Biology biologyOutTitle3:title3 negativeBtn: arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onNegative:^{
-                    /// 取消
-                    result(@(-1000));
-                    
-                } onPositive:^{
-                    // 密码支付
-                    result(@(-4000));
-                }];
-                break;
-            }
-            default :
-                break;
+                self.eventSink(@(-1000));
+            } onPositive:^{
+                // 密码支付
+                self.eventSink(@(-4000));
+            }];
+            break;
         }
-    }];
+        case LAErrorAuthenticationFailed:
+            self.eventSink(@(-1002));
+            break;
+        case LAErrorSystemCancel:
+            self.lastCallArgs = arguments;
+            self.lastResult = result;
+            break;
+        case LAErrorUserCancel:
+            self.eventSink(@(-1000));
+            break;
+        default:
+            break;
+    }
 }
 
-//  -1000 -> 取消 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
+- (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+    self.eventSink = nil;
+    return  nil;
+}
 
-#pragma mark - AppDelegate
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    if (self.lastCallArgs != nil && self.lastResult != nil) {
-        [self authenticateWithBiometrics:_lastCallArgs withFlutterResult:self.lastResult];
-    }
+- (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
+    self.eventSink = events;
+    return nil;
 }
 
 @end

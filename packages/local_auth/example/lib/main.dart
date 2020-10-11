@@ -58,11 +58,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> _authenticate() async {
     bool authenticated = false;
     try {
-      final value = await auth.authenticateWithBiometrics();
+      final value = await auth.authenticateWithBiometrics(sensitiveTransaction: true,listening: (val) {
+        print("结果.....${val}");
+      });
 
       if (value == AuthType.success) {
-        print("认证结果=成功}");
-
         setState(() {
           _isAuthenticating = true;
         });
@@ -70,8 +70,6 @@ class _MyAppState extends State<MyApp> {
         setState(() {
           _isAuthenticating = false;
         });
-
-        print("其他状态");
       }
     } catch (e) {
       print(e);
@@ -82,10 +80,6 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _authorized = message;
     });
-  }
-
-  void _cancelAuthentication() {
-    auth.stopAuthentication();
   }
 
   @override
@@ -113,8 +107,7 @@ class _MyAppState extends State<MyApp> {
                 Text('Current State: $_authorized\n'),
                 RaisedButton(
                   child: Text(_isAuthenticating ? 'Cancel' : 'Authenticate'),
-                  onPressed:
-                      _isAuthenticating ? _cancelAuthentication : _authenticate,
+                  onPressed:  _authenticate,
                 )
               ])),
     ));

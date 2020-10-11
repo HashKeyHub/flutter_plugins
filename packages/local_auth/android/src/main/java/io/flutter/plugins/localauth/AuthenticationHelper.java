@@ -105,8 +105,10 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
                 completionHandler.onSuccess();
             }
 
+            //只有多次错误,走此方法
             @Override
             public void onError(@NotNull String errorMsg) {
+                completionHandler.onError("-1002", "多次失败");
             }
 
             @Override
@@ -120,7 +122,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
 
             @Override
             public void onCancel() {
-                completionHandler.onError("-2000", "取消");
+                completionHandler.onError("-1000", "取消");
             }
 
             @Override

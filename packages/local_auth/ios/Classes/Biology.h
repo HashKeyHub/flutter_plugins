@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Biology : NSObject
 
-+(void) biologyUnLockTips:(NSString *)tips negativeBtn:(NSString *)negativeBtn positiveBtn:(NSString *)positiveBtn unLockSuccess:(void (^)(void)) unLockSuccess unLockFail:(void (^)(NSInteger)) unLockFail unLockError:(void (^)(NSInteger)) unLockError;
++(void) biologyUnLockTips:(NSString *)tips negativeBtn:(NSString *)negativeBtn positiveBtn:(NSString *)positiveBtn sensitiveTransaction:(NSInteger)sensitiveTransaction unLockSuccess:(void (^)(void)) unLockSuccess unLockFail:(void (^)(NSInteger)) unLockFail unLockError:(void (^)(NSInteger)) unLockError;
 
 +(NSInteger)isSupport;
 +(NSInteger)getWhitchBiology;

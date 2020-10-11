@@ -1,41 +1,43 @@
 // ignore: public_member_api_docs
 enum AuthType {
   // ignore: public_member_api_docs
+  /// 验证成功
   success,
 
-  /// 验证成功
   // ignore: public_member_api_docs
+  /// 验证失败
   failure,
 
+  // ignore: public_member_api_docs
   /// 验证失败
+  multipleFailure,
 
   // ignore: public_member_api_docs
+  /// 按钮
   negative,
 
-  /// 按钮
 
   // ignore: public_member_api_docs
+  /// 按钮
   positive,
 
-  /// 按钮
 
   // ignore: public_member_api_docs
+  /// 设备不支持
   notSupport,
 
-  /// 设备不支持
 
   // ignore: public_member_api_docs
+  /// 未设置指纹
   notSetting,
 
-  /// 未设置指纹
 
   // ignore: public_member_api_docs
+  /// 密码支付
   payPassword,
 
-  /// 密码支付
-
   // ignore: public_member_api_docs
+  /// 去开启权限
   goOpen,
 
-  /// 去开启权限
 }

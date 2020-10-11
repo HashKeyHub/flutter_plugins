@@ -23,6 +23,9 @@ enum BiometricType { face, fingerprint, iris }
 
 const MethodChannel _channel = MethodChannel('plugins.flutter.io/local_auth');
 
+const EventChannel _eventChannel =
+    EventChannel('plugins.flutter.io.event/local_auth');
+
 Platform _platform = const LocalPlatform();
 
 @visibleForTesting
@@ -32,50 +35,17 @@ void setMockPathProviderPlatform(Platform platform) {
 
 /// A Flutter plugin for authenticating the user identity locally.
 class LocalAuthentication {
-  /// Authenticates the user with biometrics available on the device.
-  ///
-  /// Returns a [Future] holding true, if the user successfully authenticated,
-  /// false otherwise.
-  ///
-  /// [localizedReason] is the message to show to user while prompting them
-  /// for authentication. This is typically along the lines of: 'Please scan
-  /// your finger to access MyApp.'
-  ///
-  /// [useErrorDialogs] = true means the system will attempt to handle user
-  /// fixable issues encountered while authenticating. For instance, if
-  /// fingerprint reader exists on the phone but there's no fingerprint
-  /// registered, the plugin will attempt to take the user to settings to add
-  /// one. Anything that is not user fixable, such as no biometric sensor on
-  /// device, will be returned as a [PlatformException].
-  ///
-  /// [stickyAuth] is used when the application goes into background for any
-  /// reason while the authentication is in progress. Due to security reasons,
-  /// the authentication has to be stopped at that time. If stickyAuth is set
-  /// to true, authentication resumes when the app is resumed. If it is set to
-  /// false (default), then as soon as app is paused a failure message is sent
-  /// back to Dart and it is up to the client app to restart authentication or
-  /// do something else.
-  ///
-  /// Construct [AndroidAuthStrings] and [IOSAuthStrings] if you want to
-  /// customize messages in the dialogs.
-  ///
-  /// Setting [sensitiveTransaction] to true enables platform specific
-  /// precautions. For instance, on face unlock, Android opens a confirmation
-  /// dialog after the face is recognized to make sure the user meant to unlock
-  /// their phone.
-  ///
-  /// Throws an [PlatformException] if there were technical problems with local
-  /// authentication (e.g. lack of relevant hardware). This might throw
-  /// [PlatformException] with error code [otherOperatingSystem] on the iOS
-  /// simulator.
-  /// callbackValue [onPositiveCallback]  -1000 -> 取消 -1001->失败 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
+
+  /// callbackValue [onPositiveCallback]  -1000 -> 取消 -1001->失败  -1002->多次失败 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
+
   // ignore: missing_return
   Future<AuthType> authenticateWithBiometrics({
     AndroidAuthMessages androidAuthStrings = const AndroidAuthMessages(),
     IOSAuthMessages iOSAuthStrings = const IOSAuthMessages(),
 
-    /// 是否需要positiveBtn
+    /// 是否需要密码支付
     bool sensitiveTransaction = false,
+    ValueChanged<AuthType> listening,
   }) async {
     final Map<String, dynamic> args = <String, dynamic>{
       'sensitiveTransaction': sensitiveTransaction ? 1 : 0,
@@ -92,47 +62,51 @@ class LocalAuthentication {
           details: 'Your operating system is ${_platform.operatingSystem}');
     }
     try {
-      final one =
-          await _channel.invokeMethod<int>('authenticateWithBiometrics', args);
-      switch (one) {
-        case 0:
-          return AuthType.failure;
-          break;
-        case 1:
-          return AuthType.success;
-          break;
-        case -1000:
-          return AuthType.negative;
-          break;
-        case -2000:
-          return AuthType.notSupport;
-          break;
-        case -3000:
-          return AuthType.notSetting;
-          break;
-        case -4000:
-          return AuthType.payPassword;
-          break;
-        case -5000:
-          return AuthType.goOpen;
-          break;
-      }
+      await _channel.invokeMethod<int>('authenticateWithBiometrics', args);
+      _eventChannel.receiveBroadcastStream().listen((one) {
+        if (listening == null) {
+          return;
+        }
+        switch (one) {
+          case 0:
+            listening(AuthType.failure);
+            break;
+          case 1:
+            listening(AuthType.success);
+            break;
+          case -1000:
+            listening(AuthType.negative);
+            break;
+          case -1001:
+            listening(AuthType.failure);
+            break;
+          case -1002:
+            listening(AuthType.multipleFailure);
+            break;
+          case -2000:
+            listening(AuthType.notSupport);
+            break;
+          case -3000:
+            listening(AuthType.notSetting);
+            break;
+          case -4000:
+            listening(AuthType.payPassword);
+            break;
+          case -5000:
+            listening(AuthType.goOpen);
+            break;
+        }
+      }, onError: _onError);
     } on PlatformException catch (e) {
       print("${e}");
-      return AuthType.failure;
+      if (listening != null) {
+        listening(AuthType.failure);
+      }
     }
   }
 
-  /// Returns true if auth was cancelled successfully.
-  /// This api only works for Android.
-  /// Returns false if there was some error or no auth in progress.
-  ///
-  /// Returns [Future] bool true or false:
-  Future<bool> stopAuthentication() {
-    if (_platform.isAndroid) {
-      return _channel.invokeMethod<bool>('stopAuthentication');
-    }
-    return Future<bool>.sync(() => true);
+  void _onError(Object error) {
+    print('返回的错误==${error}');
   }
 
   /// Returns true if device is capable of checking biometrics

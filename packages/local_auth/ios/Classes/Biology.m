@@ -10,7 +10,7 @@
 
 @implementation Biology
 
-+(void) biologyUnLockTips:(NSString *)tips negativeBtn:(NSString *)negativeBtn positiveBtn:(NSString *)positiveBtn unLockSuccess:(void (^)(void)) unLockSuccess unLockFail:(void (^)(NSInteger)) unLockFail unLockError:(void (^)(NSInteger)) unLockError {
++(void) biologyUnLockTips:(NSString *)tips negativeBtn:(NSString *)negativeBtn positiveBtn:(NSString *)positiveBtn sensitiveTransaction:(NSInteger)sensitiveTransaction unLockSuccess:(void (^)(void)) unLockSuccess unLockFail:(void (^)(NSInteger)) unLockFail unLockError:(void (^)(NSInteger)) unLockError {
     
     LAContext *authenticationContext = [[LAContext alloc] init];
     
@@ -21,11 +21,11 @@
     }
     
     NSError *error = nil;
-    BOOL isSupport = [authenticationContext canEvaluatePolicy: LAPolicyDeviceOwnerAuthentication error:&error];
+    BOOL isSupport = [authenticationContext canEvaluatePolicy: sensitiveTransaction == 0 ? LAPolicyDeviceOwnerAuthentication : LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error];
     
     if (isSupport) {
         
-        [authenticationContext evaluatePolicy: LAPolicyDeviceOwnerAuthentication localizedReason:tips reply:^(BOOL success, NSError * _Nullable error) {
+        [authenticationContext evaluatePolicy: sensitiveTransaction == 0 ? LAPolicyDeviceOwnerAuthentication : LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:tips reply:^(BOOL success, NSError * _Nullable error) {
 
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                 if (success) {
@@ -134,6 +134,5 @@
     
     [[[UIApplication sharedApplication] keyWindow].rootViewController presentViewController:one animated:YES completion:nil];
 }
-
 
 @end
