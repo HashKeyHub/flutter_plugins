@@ -61,7 +61,9 @@ class FingerPrintDialog : DialogFragment() {
                 dialog?.let { it1 -> onPositiveBtnListener?.onPositive(it1) }
             }
         }
-        one.tips.text = call?.argument("tips") ?: "未知"
+        one.tips?.text = call?.argument("tips") ?: " "
+        one.negativeBtn?.text = call?.argument("negativeBtn") ?: " "
+        one.positiveBtn?.text = call?.argument("positiveBtn") ?: " "
         return one
 
     }

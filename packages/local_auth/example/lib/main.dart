@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _authenticate() async {
     bool authenticated = false;
     try {
-      final value = await auth.authenticateWithBiometrics(sensitiveTransaction: true,listening: (val) {
+      final value = await auth.authenticateWithBiometrics(sensitiveTransaction: false,listening: (val) {
         print("结果.....${val}");
       });
 

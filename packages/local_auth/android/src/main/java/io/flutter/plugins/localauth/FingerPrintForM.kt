@@ -80,7 +80,14 @@ class FingerPrintForM constructor(
                 override fun onAuthenticationError(errMsgId: Int, errString: CharSequence) {
 
                     if (errMsgId == 7 || errMsgId == 9) {
-                        fingerprintDialog?.positiveBtn?.visibility = View.VISIBLE;
+
+                       var sensitiveTransaction = call?.argument<Int>("sensitiveTransaction")
+
+                        if (sensitiveTransaction == 1){
+                            fingerprintDialog?.positiveBtn?.visibility = View.VISIBLE;
+                        }
+                        fingerprintDialog.positiveBtn?.text = call?.argument<String>("positiveBtn")
+                        fingerprintDialog.negativeBtn?.text = call?.argument<String>("negativeBtn")
                         fingerprintDialog?.tips?.visibility = View.VISIBLE
                         fingerprintDialog?.tips?.text = call.argument<String>("failures")
                         fingerPrintCallback?.onError(errString.toString())
