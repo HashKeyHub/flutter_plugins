@@ -62,6 +62,7 @@ class LocalAuthentication {
           details: 'Your operating system is ${_platform.operatingSystem}');
     }
     try {
+
       await _channel.invokeMethod<int>('authenticateWithBiometrics', args);
       _eventChannel.receiveBroadcastStream().listen((one) {
         if (listening == null) {

@@ -2,4 +2,7 @@
     <string name="app_name">Example</string>
     <string name="verify_hint">请验证您的指纹</string>
     <string name="cancel">取消</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

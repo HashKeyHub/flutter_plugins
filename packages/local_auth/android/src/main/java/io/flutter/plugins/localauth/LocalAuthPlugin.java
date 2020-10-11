@@ -73,7 +73,8 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
     }
 
     @Override
-    public void onMethodCall(MethodCall call, final Result result) {
+    public void onMethodCall(final MethodCall call, final Result result) {
+
         if (call.method.equals("authenticateWithBiometrics")) {
             if (authInProgress.get()) {
                 // Apps should not invoke another authentication request while one is in progress,
@@ -118,7 +119,18 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
                                 @Override
                                 public void onError(String code, String error) {
                                     if (authInProgress.compareAndSet(true, false)) {
+
                                         biometricsEvent.getEventChannel().success(Integer.parseInt(code));
+
+                                        if (Integer.parseInt(code) == -3000) {
+                                            /// 未设置指纹
+
+                                            NoSettingBiometricsID dialog = new NoSettingBiometricsID();
+                                            dialog.setCall(call);
+
+                                            dialog.show(((FragmentActivity) activity).getSupportFragmentManager(), "getSupportFragmentManager");
+
+                                        }
                                         if (Integer.parseInt(code) == -1001 || Integer.parseInt(code) == -1002) {
                                             /// 取消
                                             authInProgress.compareAndSet(false, true);

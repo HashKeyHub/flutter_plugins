@@ -2,6 +2,7 @@ package io.flutter.plugins.localauth
 
 import android.app.Dialog
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -121,7 +122,7 @@ class FingerPrintForM constructor(
             }, null)
             fingerprintDialog.show(holder.supportFragmentManager, TAG)
         } else {
-            fingerPrintCallback.onHardwareUnavailable()
+//            fingerPrintCallback.onHardwareUnavailable()
         }
     }
 
@@ -132,7 +133,9 @@ class FingerPrintForM constructor(
         }
         //是否已添加指纹
         if (!FingerprintManagerCompat.from(holder).hasEnrolledFingerprints()) {
-            fingerPrintCallback.onNoneFingerprints()
+            Handler().postDelayed({
+                fingerPrintCallback.onNoneFingerprints()
+            },100)
             return false
         }
         return true

@@ -13,6 +13,7 @@ class AndroidAuthMessages {
     this.tips,
     this.notRecognized,
     this.failures,
+    this.touchSetting,
     this.success,
     this.negativeBtn,
     this.positiveBtn,
@@ -26,6 +27,9 @@ class AndroidAuthMessages {
 
   /// 尝试次数过多，请稍后重试。
   final String failures;
+
+  /// touch 设置权限提示
+  final String touchSetting;
 
   /// 指纹识别成功
   final String success;
@@ -41,6 +45,7 @@ class AndroidAuthMessages {
       'tips': tips ?? "请验证指纹",
       'notRecognized': notRecognized ?? "指纹验证错误，请重试",
       'failures': failures ?? "多次验证不通过，请稍后再试",
+      'touchSetting': touchSetting ?? "系统没有指纹ID信息，请先开启系统指纹ID服务",
       'success': success ?? "验证成功",
       'negativeBtn': negativeBtn ?? "取消",
       'positiveBtn': positiveBtn ?? "密码支付",
