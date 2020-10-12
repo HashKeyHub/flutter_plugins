@@ -41,7 +41,7 @@
     LAContext *context = [[LAContext alloc] init];
     NSError *authError = nil;
     NSMutableArray<NSString *> *biometrics = [[NSMutableArray<NSString *> alloc] init];
-    if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
+    if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
                              error:&authError]) {
         if (authError == nil) {
             if (@available(iOS 11.0.1, *)) {
@@ -57,12 +57,16 @@
     } else if (authError.code == LAErrorTouchIDNotEnrolled) {
         [biometrics addObject:@"undefined"];
     }
+    
     result(biometrics);
 }
 
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
                  withFlutterResult:(FlutterResult)result {
     result(@(1000000));
+    
+    
+    
     NSString *tips = @" ";
     if ([Biology getWhitchBiology] == 2) {
         tips = arguments[@"faceTips"];

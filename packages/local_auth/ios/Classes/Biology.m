@@ -12,20 +12,20 @@
 
 +(void) biologyUnLockTips:(NSString *)tips negativeBtn:(NSString *)negativeBtn positiveBtn:(NSString *)positiveBtn sensitiveTransaction:(NSInteger)sensitiveTransaction unLockSuccess:(void (^)(void)) unLockSuccess unLockFail:(void (^)(NSInteger)) unLockFail unLockError:(void (^)(NSInteger)) unLockError {
     
-    LAContext *authenticationContext = [[LAContext alloc] init];
-    
-    authenticationContext.localizedFallbackTitle = positiveBtn;
+    LAContext *context = [[LAContext alloc] init];
+    NSError *authError = nil;
+    context.localizedFallbackTitle = positiveBtn;
     if (@available(iOS 10.0, *)) {
-        authenticationContext.localizedCancelTitle = negativeBtn;
+        context.localizedCancelTitle = negativeBtn;
     } else {
     }
     
-    NSError *error = nil;
-    BOOL isSupport = [authenticationContext canEvaluatePolicy: sensitiveTransaction == 0 ? LAPolicyDeviceOwnerAuthentication : LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error];
+    BOOL isSupport = [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
+                                          error:&authError];
     
     if (isSupport) {
         
-        [authenticationContext evaluatePolicy: sensitiveTransaction == 0 ? LAPolicyDeviceOwnerAuthentication : LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:tips reply:^(BOOL success, NSError * _Nullable error) {
+        [context evaluatePolicy: sensitiveTransaction == 0 ? LAPolicyDeviceOwnerAuthentication : LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:tips reply:^(BOOL success, NSError * _Nullable error) {
 
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                 if (success) {
@@ -40,7 +40,7 @@
     else {
         
         [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            unLockError(error.code);
+            unLockError(authError.code);
         }];
     }
 }
