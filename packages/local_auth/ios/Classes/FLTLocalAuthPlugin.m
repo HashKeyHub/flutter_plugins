@@ -81,13 +81,13 @@
     [Biology biologyUnLockTips:tips negativeBtn:arguments[@"negativeBtn"] positiveBtn:btn sensitiveTransaction:sensitiveTransaction unLockSuccess:^{
         self.eventSink(@(1));
     } unLockFail:^(NSInteger code)  {
-        [self event:code biometrics:arguments flutterResult:result];
+        [self event:code biometrics:arguments flutterResult:result sensitiveTransaction:sensitiveTransaction];
     } unLockError:^(NSInteger code)  {
-        [self event:code biometrics:arguments flutterResult:result];
+        [self event:code biometrics:arguments flutterResult:result sensitiveTransaction:sensitiveTransaction];
     }];
 }
 
--(void)event:(NSInteger)code biometrics:(NSDictionary *)arguments flutterResult:(FlutterResult)result{
+-(void)event:(NSInteger)code biometrics:(NSDictionary *)arguments flutterResult:(FlutterResult)result sensitiveTransaction:(NSInteger)sensitiveTransaction{
     
     NSString *title1 = @" ";
     
@@ -144,13 +144,25 @@
         }
         case LAErrorTouchIDLockout:
         {
-            [Biology biologyOutTitle3:title3 negativeBtn: arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onNegative:^{
-                /// 取消
-                self.eventSink(@(-1000));
-            } onPositive:^{
-                // 密码支付
-                self.eventSink(@(-4000));
-            }];
+            
+            if (sensitiveTransaction) {
+                
+                [Biology biologyOutTitle3:title3 negativeBtn: arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onNegative:^{
+                    /// 取消
+                    self.eventSink(@(-1000));
+                } onPositive:^{
+                    // 密码支付
+                    self.eventSink(@(-4000));
+                }];
+            }
+            else {
+                [Biology setBiologyshouldOpenTitle2:title3 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
+                    self.eventSink(@(-1000));
+                }];
+                
+            }
+            
+   
             break;
         }
         case LAErrorAuthenticationFailed:
