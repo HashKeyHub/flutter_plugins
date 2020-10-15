@@ -8,14 +8,19 @@ import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+
 import org.jetbrains.annotations.NotNull;
+
+import io.flutter.Log;
 import io.flutter.plugin.common.MethodCall;
+
 import java.util.concurrent.Executor;
 
 /**
@@ -61,6 +66,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
     private final MethodCall call;
     private boolean activityPaused = false;
 
+
     AuthenticationHelper(
             Lifecycle lifecycle,
             FragmentActivity activity,
@@ -72,12 +78,14 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         this.completionHandler = completionHandler;
     }
 
+    FingerPrintManager finger;
+
     /**
      * Start the fingerprint listener.
      */
     void authenticate() {
 
-        FingerPrintManager finger = new FingerPrintManager(call, activity, new FingerPrintCallback() {
+        finger = new FingerPrintManager(call, activity, new FingerPrintCallback() {
             @Override
             public void onPositive() {
 
@@ -140,6 +148,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
 
     @Override
     public void onPause(@NonNull LifecycleOwner owner) {
+
         onActivityPaused(null);
     }
 
@@ -171,10 +180,12 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
 
     @Override
     public void onDestroy(@NonNull LifecycleOwner owner) {
+
     }
 
     @Override
     public void onStop(@NonNull LifecycleOwner owner) {
+
     }
 
     @Override
@@ -192,5 +203,16 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         public void execute(Runnable command) {
             handler.post(command);
         }
+    }
+
+    /**
+     * Cancels the fingerprint authentication.
+     */
+    void stopAuthentication() {
+
+        if (finger != null) {
+            finger.stopAuthenticate();
+        }
+
     }
 }

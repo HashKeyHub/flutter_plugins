@@ -95,8 +95,13 @@
     
     NSString *title3 = @" ";
     
+    //设备被锁
+    NSString *title4 = @" ";
+    
     NSString *tips = @" ";
     
+    title4 = arguments[@"deviceLockout"];
+
     if ([Biology getWhitchBiology] == 2) {
         
         title1 = arguments[@"faceLimit"];
@@ -144,25 +149,20 @@
         }
         case LAErrorTouchIDLockout:
         {
-            
-            if (sensitiveTransaction) {
-                
-                [Biology biologyOutTitle3:title3 negativeBtn: arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onNegative:^{
-                    /// 取消
-                    self.eventSink(@(-1000));
-                } onPositive:^{
-                    // 密码支付
-                    self.eventSink(@(-4000));
-                }];
-            }
-            else {
-                [Biology setBiologyshouldOpenTitle2:title3 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
-                    self.eventSink(@(-1000));
-                }];
-                
-            }
-            
-   
+            //            if (sensitiveTransaction) {
+            //
+            //                [Biology biologyOutTitle3:title4 negativeBtn: arguments[@"negativeBtn"] positiveBtn:arguments[@"payPassword"] onNegative:^{
+            //                    /// 取消
+            //                    self.eventSink(@(-1000));
+            //                } onPositive:^{
+            //                    // 密码支付
+            //                    self.eventSink(@(-4000));
+            //                }];
+            //            }
+            //            else {
+            [Biology setBiologyshouldOpenTitle2:title4 negativeBtn:arguments[@"negativeBtn"] onNegative:^{
+                self.eventSink(@(-1000));
+            }];
             break;
         }
         case LAErrorAuthenticationFailed:

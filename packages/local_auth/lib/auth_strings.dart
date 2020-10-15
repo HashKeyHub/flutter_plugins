@@ -58,6 +58,7 @@ class AndroidAuthMessages {
 /// Provides default values for all messages.
 class IOSAuthMessages {
   const IOSAuthMessages({
+    this.deviceLockout,
     this.faceLimit,
     this.faceSetting,
     this.faceFailures,
@@ -71,6 +72,9 @@ class IOSAuthMessages {
     this.payPassword,
     this.goSetting,
   });
+
+  /// 生物验证次数过多,被锁
+  final String deviceLockout;
 
   /// face 开启权限提示
   final String faceLimit;
@@ -110,6 +114,7 @@ class IOSAuthMessages {
 
   Map<String, String> get args {
     return <String, String>{
+      'deviceLockout': deviceLockout ?? "设备密码错误多次，请解锁系统限制后再试",
       'faceLimit': faceLimit ?? "开启面容ID权限才能使用解锁哦",
       'faceSetting': faceSetting ?? "系统没有面容ID信息，请先开启系统面容ID服务",
       'faceFailures': faceFailures ?? "超出面容 ID 尝试次数",

@@ -144,4 +144,14 @@ class LocalAuthentication {
     });
     return biometrics;
   }
+
+
+  Future<bool> stopAuthentication() {
+    if (_platform.isAndroid) {
+      return _channel.invokeMethod<bool>('stopAuthentication');
+    }
+    return Future<bool>.sync(() => true);
+  }
+
+
 }

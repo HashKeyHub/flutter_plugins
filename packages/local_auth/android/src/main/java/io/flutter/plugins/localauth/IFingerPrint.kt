@@ -22,4 +22,8 @@ interface IFingerPrint {
      * 是否支持指纹认证
      */
     fun canAuthenticate(): Boolean
+
+    
+    fun stopAuthenticates()
+
 }

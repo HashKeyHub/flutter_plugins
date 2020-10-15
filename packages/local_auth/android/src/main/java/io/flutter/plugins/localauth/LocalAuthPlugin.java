@@ -75,6 +75,8 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
     @Override
     public void onMethodCall(final MethodCall call, final Result result) {
 
+
+
         if (call.method.equals("authenticateWithBiometrics")) {
             if (authInProgress.get()) {
                 // Apps should not invoke another authentication request while one is in progress,
@@ -158,11 +160,29 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
             }
         } else if (call.method.equals(("stopAuthentication"))) {
 
+            stopAuthentication(result);
+
         } else {
 
             result.notImplemented();
         }
     }
+
+
+    private void stopAuthentication(Result result) {
+        try {
+            if (authenticationHelper != null && authInProgress.get()) {
+                authenticationHelper.stopAuthentication();
+                authenticationHelper = null;
+                result.success(true);
+                return;
+            }
+            result.success(false);
+        } catch (Exception e) {
+            result.success(false);
+        }
+    }
+
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {

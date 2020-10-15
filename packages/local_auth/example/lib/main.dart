@@ -20,7 +20,28 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.inactive:
+        await auth.stopAuthentication();
+        break;
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
+
+  }
+
   final LocalAuthentication auth = LocalAuthentication();
   bool _canCheckBiometrics;
   List<BiometricType> _availableBiometrics;
@@ -58,9 +79,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> _authenticate() async {
     bool authenticated = false;
     try {
-      final value = await auth.authenticateWithBiometrics(sensitiveTransaction: false,listening: (val) {
-        print("结果.....${val}");
-      });
+      final value = await auth.authenticateWithBiometrics(
+          sensitiveTransaction: false,
+          listening: (val) {
+            print("结果.....${val}");
+          });
 
       if (value == AuthType.success) {
         setState(() {
@@ -107,7 +130,7 @@ class _MyAppState extends State<MyApp> {
                 Text('Current State: $_authorized\n'),
                 RaisedButton(
                   child: Text(_isAuthenticating ? 'Cancel' : 'Authenticate'),
-                  onPressed:  _authenticate,
+                  onPressed: _authenticate,
                 )
               ])),
     ));

@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,17 +48,17 @@ class FingerPrintDialog : DialogFragment() {
             savedInstanceState: Bundle?
     ): View? {
         isCancelable = false
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-       var one = inflater.inflate(R.layout.dialog_finger_print, container).apply {
+        var one = inflater.inflate(R.layout.dialog_finger_print, container).apply {
 
             negativeBtn.setOnClickListener {
-                dismiss();
+                dismiss()
                 dialog?.let { it1 -> onCancelListener?.onCancel(it1) }
             }
 
             positiveBtn.setOnClickListener {
-                dismiss();
+                dismiss()
                 dialog?.let { it1 -> onPositiveBtnListener?.onPositive(it1) }
             }
         }

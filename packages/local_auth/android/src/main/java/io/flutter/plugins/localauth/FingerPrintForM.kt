@@ -47,18 +47,23 @@ class FingerPrintForM constructor(
         FingerprintManagerCompat.from(holder)
     }
 
-    /**
-     * 取消标识
-     */
-//    private val cancellationSignal by lazy {
-//        CancellationSignal()
-//    }
 
-    private val cancellationSignal: CancellationSignal = CancellationSignal();
+    private val cancellationSignal: CancellationSignal = CancellationSignal()
+
+    private var fingerprintDialog: FingerPrintDialog? = null
+
+    override fun stopAuthenticates() {
+        cancellationSignal.cancel()
+        fingerPrintCallback.onCancel()
+        fingerprintDialog?.dismiss()
+        fingerprintDialog = null
+    }
 
     override fun authenticate() {
 
-        val fingerprintDialog = FingerPrintDialog.newInstance(call).apply {
+        fingerprintDialog = FingerPrintDialog.newInstance(call)
+
+        fingerprintDialog?.apply {
 
             onCancelListener = object : FingerPrintDialog.OnCancelListener {
                 override fun onCancel(dialog: Dialog) {
@@ -74,6 +79,7 @@ class FingerPrintForM constructor(
                 }
             }
         }
+
         if (canAuthenticate()) {
             fingerprint.authenticate(null, 0, cancellationSignal, object :
                     FingerprintManagerCompat.AuthenticationCallback() {
@@ -82,13 +88,13 @@ class FingerPrintForM constructor(
 
                     if (errMsgId == 7 || errMsgId == 9) {
 
-                       var sensitiveTransaction = call?.argument<Int>("sensitiveTransaction")
+                        var sensitiveTransaction = call?.argument<Int>("sensitiveTransaction")
 
-                        if (sensitiveTransaction == 1){
+                        if (sensitiveTransaction == 1) {
                             fingerprintDialog?.positiveBtn?.visibility = View.VISIBLE;
                         }
-                        fingerprintDialog.positiveBtn?.text = call?.argument<String>("positiveBtn")
-                        fingerprintDialog.negativeBtn?.text = call?.argument<String>("negativeBtn")
+                        fingerprintDialog?.positiveBtn?.text = call?.argument<String>("positiveBtn")
+                        fingerprintDialog?.negativeBtn?.text = call?.argument<String>("negativeBtn")
                         fingerprintDialog?.tips?.visibility = View.VISIBLE
                         fingerprintDialog?.tips?.text = call.argument<String>("failures")
                         fingerPrintCallback?.onError(errString.toString())
@@ -96,7 +102,7 @@ class FingerPrintForM constructor(
                 }
 
                 override fun onAuthenticationFailed() {
-                    fingerprintDialog.tips?.apply {
+                    fingerprintDialog?.tips?.apply {
                         visibility = View.VISIBLE
                         text = call.argument<String>("notRecognized")
                     }
@@ -112,15 +118,16 @@ class FingerPrintForM constructor(
                 }
 
                 override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
-                    fingerprintDialog.tips?.apply {
+                    fingerprintDialog?.tips?.apply {
                         text = call.argument<String>("success")
                         visibility = View.INVISIBLE
                     }
                     fingerPrintCallback.onSucceeded()
-                    fingerprintDialog.dismiss()
+                    fingerprintDialog?.dismiss()
                 }
             }, null)
-            fingerprintDialog.show(holder.supportFragmentManager, TAG)
+            fingerprintDialog?.showNow(holder.supportFragmentManager, "FingerPrintForM")
+
         } else {
 //            fingerPrintCallback.onHardwareUnavailable()
         }
@@ -135,7 +142,7 @@ class FingerPrintForM constructor(
         if (!FingerprintManagerCompat.from(holder).hasEnrolledFingerprints()) {
             Handler().postDelayed({
                 fingerPrintCallback.onNoneFingerprints()
-            },100)
+            }, 100)
             return false
         }
         return true

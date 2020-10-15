@@ -2,6 +2,7 @@ package io.flutter.plugins.localauth
 
 import android.annotation.TargetApi
 import android.os.Build
+import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodCodec
@@ -31,11 +32,7 @@ class FingerPrintManager constructor(
 
 
     private val fingerPrint by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && supportAndroidP) {
-            FingerPrintForP(holder, callback)
-        } else {
             FingerPrintForM(call,holder, callback)
-        }
     }
 
     /**
@@ -47,5 +44,9 @@ class FingerPrintManager constructor(
         } else {
             callback.onHardwareUnavailable()
         }
+    }
+    
+    fun stopAuthenticate(){
+        fingerPrint.stopAuthenticates()
     }
 }
