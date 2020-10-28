@@ -29,8 +29,12 @@ abstract class WebViewPlatformCallbacksHandler {
   /// Invoked by [WebViewPlatformController] when a page has finished loading.
   void onPageFinished(String url);
 
-  /// Report web resource loading error to the host application.
+  ///Report web resource loading error to the host application.
   void onWebResourceError(WebResourceError error);
+
+  /// 网页加载进度回调.
+  void onLoadingProgress({double progress});
+
 }
 
 /// Possible error type categorizations used by [WebResourceError].
@@ -471,6 +475,9 @@ class CreationParams {
   }
 }
 
+/// Signature for callbacks reporting that a [WebViewPlatformController] was created.
+///
+/// See also the `onWebViewPlatformCreated` argument for [WebViewPlatform.build].
 typedef WebViewPlatformCreatedCallback = void Function(
     WebViewPlatformController webViewPlatformController);
 

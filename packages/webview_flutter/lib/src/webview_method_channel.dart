@@ -61,6 +61,10 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
           ),
         );
         return null;
+      case 'loadingProgress':
+        _platformCallbacksHandler.onLoadingProgress(
+            progress: double.parse(call.arguments['progress'].toString()));
+        return null;
     }
 
     throw MissingPluginException(

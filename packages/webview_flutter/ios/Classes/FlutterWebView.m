@@ -10,6 +10,8 @@
   NSObject<FlutterBinaryMessenger>* _messenger;
 }
 
+
+
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger>*)messenger {
   self = [super init];
   if (self) {
@@ -66,6 +68,13 @@
   FLTWKNavigationDelegate* _navigationDelegate;
 }
 
+- (void)dealloc
+{
+    if (_webView != NULL) {
+        [_webView removeObserver:self forKeyPath:@"estimatedProgress"];
+    }
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
                viewIdentifier:(int64_t)viewId
                     arguments:(id _Nullable)args
@@ -95,6 +104,7 @@
     _navigationDelegate = [[FLTWKNavigationDelegate alloc] initWithChannel:_channel];
     _webView.UIDelegate = self;
     _webView.navigationDelegate = _navigationDelegate;
+    [_webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:NULL];
     __weak __typeof__(self) weakSelf = self;
     [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
       [weakSelf onMethodCall:call result:result];
@@ -161,6 +171,15 @@
   } else {
     result(FlutterMethodNotImplemented);
   }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath  isEqual: @"estimatedProgress"] && [object isKindOfClass:[WKWebView class]]) {
+        [_channel invokeMethod:@"loadingProgress" arguments:@{@"progress":@(_webView.estimatedProgress)}];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (void)onUpdateSettings:(FlutterMethodCall*)call result:(FlutterResult)result {

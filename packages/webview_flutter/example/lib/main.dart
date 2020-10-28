@@ -6,6 +6,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -36,48 +37,75 @@ class _WebViewExampleState extends State<WebViewExample> {
       Completer<WebViewController>();
 
   @override
+  void initState() {
+    super.initState();
+    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter WebView example'),
-        // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
-        actions: <Widget>[
-          NavigationControls(_controller.future),
-          SampleMenu(_controller.future),
-        ],
+    return MaterialApp(
+//      routes: {
+//        "web":(context)=>MyWebView()
+//      },
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter WebView example'),
+          // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
+          actions: <Widget>[
+            NavigationControls(_controller.future),
+            SampleMenu(_controller.future),
+          ],
+        ),
+        // We're using a Builder here so we have a context that is below the Scaffold
+        // to allow calling Scaffold.of(context) so we can show a snackbar.
+        body: Builder(builder: (BuildContext context) {
+          return FlatButton(
+            onPressed: () {
+//              Navigator.pushNamed(context, "web");
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return MyWebView();
+                }),
+              );
+            },
+            child: Text(
+              "跳转",
+            ),
+          );
+
+//        return WebView(
+//          initialUrl: 'https://flutter.dev',
+//          javascriptMode: JavascriptMode.unrestricted,
+//          onWebViewCreated: (WebViewController webViewController) {
+//            _controller.complete(webViewController);
+//          },
+//          // TODO(iskakaushik): Remove this when collection literals makes it to stable.
+//          // ignore: prefer_collection_literals
+//          javascriptChannels: <JavascriptChannel>[
+//            _toasterJavascriptChannel(context),
+//          ].toSet(),
+//          navigationDelegate: (NavigationRequest request) {
+//            if (request.url.startsWith('https://www.youtube.com/')) {
+//              print('blocking navigation to $request}');
+//              return NavigationDecision.prevent;
+//            }
+//            print('allowing navigation to $request');
+//            return NavigationDecision.navigate;
+//          },
+//          onPageStarted: (String url) {
+//            print('Page started loading: $url');
+//          },
+//          onPageFinished: (String url) {
+//            print('Page finished loading: $url');
+//          },
+//          gestureNavigationEnabled: true,
+//        );
+        }),
+        floatingActionButton: favoriteButton(),
       ),
-      // We're using a Builder here so we have a context that is below the Scaffold
-      // to allow calling Scaffold.of(context) so we can show a snackbar.
-      body: Builder(builder: (BuildContext context) {
-        return WebView(
-          initialUrl: 'https://flutter.dev',
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            _controller.complete(webViewController);
-          },
-          // TODO(iskakaushik): Remove this when collection literals makes it to stable.
-          // ignore: prefer_collection_literals
-          javascriptChannels: <JavascriptChannel>[
-            _toasterJavascriptChannel(context),
-          ].toSet(),
-          navigationDelegate: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              print('blocking navigation to $request}');
-              return NavigationDecision.prevent;
-            }
-            print('allowing navigation to $request');
-            return NavigationDecision.navigate;
-          },
-          onPageStarted: (String url) {
-            print('Page started loading: $url');
-          },
-          onPageFinished: (String url) {
-            print('Page finished loading: $url');
-          },
-          gestureNavigationEnabled: true,
-        );
-      }),
-      floatingActionButton: favoriteButton(),
     );
   }
 
@@ -85,6 +113,7 @@ class _WebViewExampleState extends State<WebViewExample> {
     return JavascriptChannel(
         name: 'Toaster',
         onMessageReceived: (JavascriptMessage message) {
+          // ignore: deprecated_member_use
           Scaffold.of(context).showSnackBar(
             SnackBar(content: Text(message.message)),
           );
@@ -100,6 +129,7 @@ class _WebViewExampleState extends State<WebViewExample> {
             return FloatingActionButton(
               onPressed: () async {
                 final String url = await controller.data.currentUrl();
+                // ignore: deprecated_member_use
                 Scaffold.of(context).showSnackBar(
                   SnackBar(content: Text('Favorited $url')),
                 );
@@ -208,6 +238,7 @@ class SampleMenu extends StatelessWidget {
       WebViewController controller, BuildContext context) async {
     final String cookies =
         await controller.evaluateJavascript('document.cookie');
+    // ignore: deprecated_member_use
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -223,6 +254,7 @@ class SampleMenu extends StatelessWidget {
   void _onAddToCache(WebViewController controller, BuildContext context) async {
     await controller.evaluateJavascript(
         'caches.open("test_caches_entry"); localStorage["test_localStorage"] = "dummy_entry";');
+    // ignore: deprecated_member_use
     Scaffold.of(context).showSnackBar(const SnackBar(
       content: Text('Added a test entry to cache.'),
     ));
@@ -236,6 +268,7 @@ class SampleMenu extends StatelessWidget {
 
   void _onClearCache(WebViewController controller, BuildContext context) async {
     await controller.clearCache();
+    // ignore: deprecated_member_use
     Scaffold.of(context).showSnackBar(const SnackBar(
       content: Text("Cache cleared."),
     ));
@@ -247,6 +280,7 @@ class SampleMenu extends StatelessWidget {
     if (!hadCookies) {
       message = 'There are no cookies.';
     }
+    // ignore: deprecated_member_use
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
     ));
@@ -299,6 +333,7 @@ class NavigationControls extends StatelessWidget {
                       if (await controller.canGoBack()) {
                         await controller.goBack();
                       } else {
+                        // ignore: deprecated_member_use
                         Scaffold.of(context).showSnackBar(
                           const SnackBar(content: Text("No back history item")),
                         );
@@ -314,6 +349,7 @@ class NavigationControls extends StatelessWidget {
                       if (await controller.canGoForward()) {
                         await controller.goForward();
                       } else {
+                        // ignore: deprecated_member_use
                         Scaffold.of(context).showSnackBar(
                           const SnackBar(
                               content: Text("No forward history item")),
@@ -334,5 +370,67 @@ class NavigationControls extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class MyWebView extends StatefulWidget {
+  @override
+  _MyWebViewState createState() => _MyWebViewState();
+}
+
+class _MyWebViewState extends State<MyWebView> {
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("网页"),
+      ),
+      body: Container(
+        child: WebView(
+          initialUrl: 'https://www.pgyer.com',
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (WebViewController webViewController) {
+            _controller.complete(webViewController);
+          },
+          // TODO(iskakaushik): Remove this when collection literals makes it to stable.
+          // ignore: prefer_collection_literals
+          javascriptChannels: <JavascriptChannel>[
+            _toasterJavascriptChannel(context),
+          ].toSet(),
+          navigationDelegate: (NavigationRequest request) {
+            if (request.url.startsWith('https://www.youtube.com/')) {
+              print('blocking navigation to $request}');
+              return NavigationDecision.prevent;
+            }
+            print('allowing navigation to $request');
+            return NavigationDecision.navigate;
+          },
+          onPageStarted: (String url) {
+            print('Page started loading: $url');
+          },
+          onPageFinished: (String url) {
+            print('Page finished loading: $url');
+          },
+          onLoadingProgress: (val) {
+            print("==onLoadingProgress=${val}");
+          },
+          gestureNavigationEnabled: true,
+        ),
+      ),
+    );
+  }
+
+  JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: 'Toaster',
+        onMessageReceived: (JavascriptMessage message) {
+          // ignore: deprecated_member_use
+          Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text(message.message)),
+          );
+        });
   }
 }

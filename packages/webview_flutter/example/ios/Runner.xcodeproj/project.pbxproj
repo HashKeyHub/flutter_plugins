@@ -218,8 +218,13 @@
 				LastUpgradeCheck = 1030;
 				ORGANIZATIONNAME = "The Chromium Authors";
 				TargetAttributes = {
+					68BDCAE823C3F7CB00D9C032 = {
+						ProvisioningStyle = Automatic;
+					};
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = SY2N3S55A6;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -537,8 +542,9 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = SY2N3S55A6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -552,6 +558,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.flutter.plugins.webviewFlutterExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = WildcardSingapore;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -561,8 +568,9 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = SY2N3S55A6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -576,6 +584,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.flutter.plugins.webviewFlutterExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = WildcardSingapore;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
