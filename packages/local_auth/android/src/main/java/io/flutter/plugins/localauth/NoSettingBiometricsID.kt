@@ -1,5 +1,5 @@
-
 package io.flutter.plugins.localauth
+
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.dialog_finger_print.view.*
 class NoSettingBiometricsID : DialogFragment() {
 
     var call: MethodCall? = null
-    
+
     var onCancelListener: OnCancelListener? = null
 
     var onPositiveBtnListener: OnPositiveBtnListener? = null
@@ -47,6 +47,18 @@ class NoSettingBiometricsID : DialogFragment() {
                 dismiss();
                 dialog?.let { it1 -> onCancelListener?.onCancel(it1) }
             }
+        }
+
+        try {
+            var dark = call?.argument("dark") ?: 0
+            if (dark == 1) {
+                one.setBackgroundResource(R.drawable.finger_dialog_background_dark)
+                one.findViewById<TextView>(R.id.negativeBtn).setTextColor(Color.argb(127, 255, 255, 255))
+                one.findViewById<TextView>(R.id.positiveBtn).setTextColor(Color.argb(127, 255, 255, 255))
+                one.findViewById<View>(R.id.v_finger_print_divider).setBackgroundColor(Color.argb(13, 255, 255, 255))
+                one.findViewById<View>(R.id.h_finger_print_divider).setBackgroundColor(Color.argb(13, 255, 255, 255))
+            }
+        } catch (e: Exception) {
         }
 
         one.tips?.text = call?.argument("touchSetting") ?: " "

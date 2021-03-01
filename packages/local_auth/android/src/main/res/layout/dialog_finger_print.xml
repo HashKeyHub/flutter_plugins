@@ -55,6 +55,7 @@
             android:textSize="16sp" />
 
         <View
+            android:id="@+id/h_finger_print_divider"
             android:layout_width="0.5dp"
             android:layout_height="60dp"
             android:background="#e8e8e8" />
