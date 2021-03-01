@@ -75,9 +75,31 @@ public class LocalAuthPlugin implements MethodCallHandler, FlutterPlugin, Activi
     @Override
     public void onMethodCall(final MethodCall call, final Result result) {
 
+        if (call.method.equals("canAuthenticate")) {
+            authenticationHelper =
+                    new AuthenticationHelper(
+                            lifecycle,
+                            (FragmentActivity) activity,
+                            call,
+                            new AuthCompletionHandler() {
+                                @Override
+                                public void onSuccess() {
+                                    if (authInProgress.compareAndSet(true, false)) {
+                                        biometricsEvent.getEventChannel().success(1);
+                                    }
+                                }
 
+                                @Override
+                                public void onFailure() {
+                                }
 
-        if (call.method.equals("authenticateWithBiometrics")) {
+                                @Override
+                                public void onError(String code, String error) {
+
+                                }
+                            });
+            result.success(authenticationHelper.canAuthentication() ? 1 : 0);
+        } else if (call.method.equals("authenticateWithBiometrics")) {
             if (authInProgress.get()) {
                 // Apps should not invoke another authentication request while one is in progress,
                 // so we classify this as an error condition. If we ever find a legitimate use case for

@@ -32,8 +32,9 @@ class FingerPrintManager constructor(
 
 
     private val fingerPrint by lazy {
-            FingerPrintForM(call,holder, callback)
+        FingerPrintForM(call, holder, callback)
     }
+
 
     /**
      * 指纹验证
@@ -45,8 +46,12 @@ class FingerPrintManager constructor(
             callback.onHardwareUnavailable()
         }
     }
-    
-    fun stopAuthenticate(){
+
+    fun canAuthenticate(): Boolean {
+        return fingerPrint.canAuthenticate()
+    }
+
+    fun stopAuthenticate() {
         fingerPrint.stopAuthenticates()
     }
 }

@@ -215,4 +215,56 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         }
 
     }
+
+    boolean canAuthentication() {
+        finger = new FingerPrintManager(call, activity, new FingerPrintCallback() {
+            @Override
+            public void onPositive() {
+
+                completionHandler.onError("-4000", "密码支付");
+            }
+
+            @Override
+            public void onSucceeded() {
+                completionHandler.onSuccess();
+            }
+
+            //只有多次错误,走此方法
+            @Override
+            public void onError(@NotNull String errorMsg) {
+                completionHandler.onError("-1002", "多次失败");
+            }
+
+            @Override
+            public void onAuthHelp(@NotNull String helpStr) {
+            }
+
+            @Override
+            public void onFailed() {
+                completionHandler.onError("-1001", "失败");
+            }
+
+            @Override
+            public void onCancel() {
+                completionHandler.onError("-1000", "取消");
+            }
+
+            @Override
+            public void onNoneFingerprints() {
+                completionHandler.onError("-3000", "未设置指纹");
+            }
+
+            @Override
+            public void onHardwareUnavailable() {
+                completionHandler.onError("-2000", "设备不支持");
+            }
+        });
+        finger.setSupportAndroidP(false);
+
+        if (finger != null) {
+            return finger.canAuthenticate();
+        }
+        return false;
+
+    }
 }
