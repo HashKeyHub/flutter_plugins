@@ -35,7 +35,6 @@ void setMockPathProviderPlatform(Platform platform) {
 
 /// A Flutter plugin for authenticating the user identity locally.
 class LocalAuthentication {
-
   /// callbackValue [onPositiveCallback]  -1000 -> 取消 -1001->失败  -1002->多次失败 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
 
   // ignore: missing_return
@@ -45,10 +44,12 @@ class LocalAuthentication {
 
     /// 是否需要密码支付
     bool sensitiveTransaction = false,
+    bool dark = false,
     ValueChanged<AuthType> listening,
   }) async {
     final Map<String, dynamic> args = <String, dynamic>{
       'sensitiveTransaction': sensitiveTransaction ? 1 : 0,
+      'dark': dark ? 1 : 0,
     };
     if (_platform.isIOS) {
       args.addAll(iOSAuthStrings.args);
@@ -62,7 +63,6 @@ class LocalAuthentication {
           details: 'Your operating system is ${_platform.operatingSystem}');
     }
     try {
-
       await _channel.invokeMethod<int>('authenticateWithBiometrics', args);
       _eventChannel.receiveBroadcastStream().listen((one) {
         if (listening == null) {
@@ -145,6 +145,10 @@ class LocalAuthentication {
     return biometrics;
   }
 
+  Future<bool> canAuthenticate() async {
+    final response = await _channel.invokeMethod<int>('canAuthenticate');
+    return response == 0 ? false : true;
+  }
 
   Future<bool> stopAuthentication() {
     if (_platform.isAndroid) {
@@ -152,6 +156,4 @@ class LocalAuthentication {
     }
     return Future<bool>.sync(() => true);
   }
-
-
 }
