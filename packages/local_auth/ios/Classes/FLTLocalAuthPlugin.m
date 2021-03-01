@@ -28,7 +28,10 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-    if ([@"authenticateWithBiometrics" isEqualToString:call.method]) {
+    if ([@"canAuthenticate" isEqualToString:call.method]){
+        [self canAuthenticate:call.arguments withFlutterResult:result];
+    }
+    else if ([@"authenticateWithBiometrics" isEqualToString:call.method]) {
         [self authenticateWithBiometrics:call.arguments withFlutterResult:result];
     } else if ([@"getAvailableBiometrics" isEqualToString:call.method]) {
         [self getAvailableBiometrics:result];
@@ -59,6 +62,25 @@
     }
     
     result(biometrics);
+}
+
+- (void)canAuthenticate:(NSDictionary *)arguments
+                 withFlutterResult:(FlutterResult)result {
+    LAContext *context = [[LAContext alloc] init];
+    NSError *authError = nil;
+    BOOL isSupport = [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
+                                          error:&authError];
+    if (isSupport) {
+        result(@1);
+    }
+    else {
+        if (authError.code == LAErrorTouchIDNotEnrolled){
+            result(@0);
+        }
+        else{
+            result(@1);
+        }
+    }
 }
 
 - (void)authenticateWithBiometrics:(NSDictionary *)arguments
