@@ -226,7 +226,7 @@ class FlutterWebviewPlugin {
   }
 
   /// Execute Javascript inside webview
-  Future<String> evalJavascript(String code) async {
+  Future<String?> evalJavascript(String code) async {
     final res = await _channel.invokeMethod('eval', {'code': code});
     return res;
   }
@@ -245,10 +245,10 @@ class FlutterWebviewPlugin {
   Future<Null> goBack() async => await _channel.invokeMethod('back');
 
   /// Checks if webview can navigate back
-  Future<bool> canGoBack() async => await _channel.invokeMethod('canGoBack');
+  Future<bool?> canGoBack() async => await _channel.invokeMethod('canGoBack');
 
   /// Checks if webview can navigate back
-  Future<bool> canGoForward() async => await _channel.invokeMethod('canGoForward');
+  Future<bool?> canGoForward() async => await _channel.invokeMethod('canGoForward');
 
   /// Navigates forward on the Webview.
   Future<Null> goForward() async => await _channel.invokeMethod('forward');
@@ -299,7 +299,7 @@ class FlutterWebviewPlugin {
     final cookiesString = await evalJavascript('document.cookie');
     final cookies = <String, String>{};
 
-    if (cookiesString?.isNotEmpty == true) {
+    if (cookiesString != null && cookiesString.isNotEmpty == true) {
       cookiesString.split(';').forEach((String cookie) {
         final split = cookie.split('=');
         cookies[split[0]] = split[1];
