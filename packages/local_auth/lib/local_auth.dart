@@ -38,14 +38,14 @@ class LocalAuthentication {
   /// callbackValue [onPositiveCallback]  -1000 -> 取消 -1001->失败  -1002->多次失败 -2000 ->设备不支持 -3000 -> 未设置指纹 -4000 -> 密码支付 -5000 -> 去设置开启
 
   // ignore: missing_return
-  Future<AuthType> authenticateWithBiometrics({
+  Future<AuthType?> authenticateWithBiometrics({
     AndroidAuthMessages androidAuthStrings = const AndroidAuthMessages(),
     IOSAuthMessages iOSAuthStrings = const IOSAuthMessages(),
 
     /// 是否需要密码支付
     bool sensitiveTransaction = false,
     bool dark = false,
-    ValueChanged<AuthType> listening,
+    ValueChanged<AuthType>? listening,
   }) async {
     final Map<String, dynamic> args = <String, dynamic>{
       'sensitiveTransaction': sensitiveTransaction ? 1 : 0,
@@ -113,9 +113,9 @@ class LocalAuthentication {
   /// Returns true if device is capable of checking biometrics
   ///
   /// Returns a [Future] bool true or false:
-  Future<bool> get canCheckBiometrics async =>
+  Future<bool?> get canCheckBiometrics async =>
       (await _channel.invokeListMethod<String>('getAvailableBiometrics'))
-          .isNotEmpty;
+          ?.isNotEmpty;
 
   /// Returns a list of enrolled biometrics
   ///
@@ -124,9 +124,12 @@ class LocalAuthentication {
   /// - BiometricType.fingerprint
   /// - BiometricType.iris (not yet implemented)
   Future<List<BiometricType>> getAvailableBiometrics() async {
-    final List<String> result =
+    final List<String>? result =
         (await _channel.invokeListMethod<String>('getAvailableBiometrics'));
     final List<BiometricType> biometrics = <BiometricType>[];
+
+    if(result==null) return biometrics;
+
     result.forEach((String value) {
       switch (value) {
         case 'face':
@@ -150,7 +153,7 @@ class LocalAuthentication {
     return response == 0 ? false : true;
   }
 
-  Future<bool> stopAuthentication() {
+  Future<bool?> stopAuthentication() {
     if (_platform.isAndroid) {
       return _channel.invokeMethod<bool>('stopAuthentication');
     }

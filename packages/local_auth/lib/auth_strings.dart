@@ -20,25 +20,25 @@ class AndroidAuthMessages {
   });
 
   /// 指纹识别提示
-  final String tips;
+  final String? tips;
 
   /// 指纹识别失败
-  final String notRecognized;
+  final String? notRecognized;
 
   /// 尝试次数过多，请稍后重试。
-  final String failures;
+  final String? failures;
 
   /// touch 设置权限提示
-  final String touchSetting;
+  final String? touchSetting;
 
   /// 指纹识别成功
-  final String success;
+  final String? success;
 
   /// 取消按钮
-  final String negativeBtn;
+  final String? negativeBtn;
 
   /// 使用密码支付
-  final String positiveBtn;
+  final String? positiveBtn;
 
   Map<String, String> get args {
     return <String, String>{
@@ -74,43 +74,43 @@ class IOSAuthMessages {
   });
 
   /// 生物验证次数过多,被锁
-  final String deviceLockout;
+  final String? deviceLockout;
 
   /// face 开启权限提示
-  final String faceLimit;
+  final String? faceLimit;
 
   /// face 设置权限提示
-  final String faceSetting;
+  final String? faceSetting;
 
   /// face 超出尝试次数
-  final String faceFailures;
+  final String? faceFailures;
 
   /// face 超出尝试次数
-  final String faceTips;
+  final String? faceTips;
 
   /// touch 开启权限提示
-  final String touchLimit;
+  final String? touchLimit;
 
   /// touch 设置权限提示
-  final String touchSetting;
+  final String? touchSetting;
 
   /// touch 超出尝试次数
-  final String touchFailures;
+  final String? touchFailures;
 
   /// touch 超出尝试次数
-  final String touchTips;
+  final String? touchTips;
 
   /// 取消按钮
-  final String negativeBtn;
+  final String? negativeBtn;
 
   /// 密码解锁
-  final String positiveBtn;
+  final String? positiveBtn;
 
   /// 使用密码支付
-  final String payPassword;
+  final String? payPassword;
 
   /// 开启权限
-  final String goSetting;
+  final String? goSetting;
 
   Map<String, String> get args {
     return <String, String>{
