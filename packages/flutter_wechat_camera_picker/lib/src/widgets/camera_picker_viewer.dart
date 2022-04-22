@@ -284,12 +284,8 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
           iconSize: 18,
           icon: Container(
             padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: Theme.of(context).iconTheme.color,
-              shape: BoxShape.circle,
-            ),
             child: Icon(
-              Icons.keyboard_return_rounded,
+              Icons.arrow_back_ios,
               color: Theme.of(context).canvasColor,
             ),
           ),
@@ -329,19 +325,19 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
   /// The confirm button for the preview section.
   /// 预览区的确认按钮
   Widget get previewConfirmButton {
-    return MaterialButton(
+    return  MaterialButton(
       minWidth: 20.0,
-      height: 32.0,
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      color: theme.colorScheme.secondary,
+      height: 44.0,
+      padding: const EdgeInsets.symmetric(horizontal: 52.0),
+      color: const Color(0xfffa8232),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(3.0),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: Text(
         Constants.textDelegate.confirm,
         style: TextStyle(
           color: theme.textTheme.bodyText1?.color,
-          fontSize: 17.0,
+          fontSize: 16.0,
           fontWeight: FontWeight.normal,
         ),
       ),
@@ -355,17 +351,17 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
   Widget get cropperButton {
     return MaterialButton(
       minWidth: 20.0,
-      height: 32.0,
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      color: theme.colorScheme.secondary,
+      height: 44.0,
+      padding: const EdgeInsets.symmetric(horizontal: 52.0),
+      color: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(3.0),
+        borderRadius: BorderRadius.circular(8.0),
       ),
       child: Text(
         Constants.textDelegate.cropper,
-        style: TextStyle(
-          color: theme.textTheme.bodyText1?.color,
-          fontSize: 17.0,
+        style: const TextStyle(
+          color: Color(0xfffa8232),
+          fontSize: 16.0,
           fontWeight: FontWeight.normal,
         ),
       ),
@@ -408,37 +404,37 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
   /// Actions section for the viewer. Including 'back' and 'confirm' button.
   /// 预览的操作区。包括"返回"和"确定"按钮。
   Widget viewerActions(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8.0,
-          vertical: 20.0,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+    return  Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+      Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top -5),child:
+      Semantics(
+        sortKey: const OrdinalSortKey(0),
+        child: Row(
           children: <Widget>[
-            Semantics(
-              sortKey: const OrdinalSortKey(0),
-              child: Row(
-                children: <Widget>[
-                  previewBackButton(context),
-                  const Spacer(),
-                ],
-              ),
-            ),
-            Semantics(
-              sortKey: const OrdinalSortKey(2),
-              child: Row(
-                children: <Widget>[
-                  if (pickerType == CameraPickerViewType.image) cropperButton else SizedBox(),
-                  const Spacer(),
-                  previewConfirmButton,
-                ],
-              ),
-            ),
+            previewBackButton(context),
+            const Spacer(),
           ],
         ),
-      ),
+      ),),
+        Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom -10),
+          child:Semantics(
+          sortKey: const OrdinalSortKey(2),
+          child: Container(
+            padding:const EdgeInsets.only(left: 15,right: 15),
+            child: Row(
+              children: <Widget>[
+                if (pickerType == CameraPickerViewType.image) cropperButton else const SizedBox(),
+                const Spacer(),
+                previewConfirmButton,
+              ],
+            ),
+          ),
+        ),
+        ),
+
+      ],
     );
   }
   Future<void> imageCropper() async{
@@ -452,13 +448,13 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
           CropAspectRatioPreset.ratio4x3,
           CropAspectRatioPreset.ratio16x9
         ],
-        androidUiSettings: AndroidUiSettings(
+        androidUiSettings: const AndroidUiSettings(
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
-        iosUiSettings: IOSUiSettings(
+        iosUiSettings:const IOSUiSettings(
           minimumAspectRatio: 1.0,
         )
     );

@@ -108,7 +108,7 @@ class EnglishCameraPickerTextDelegate extends CameraPickerTextDelegate {
   String get confirm => 'Confirm';
 
   @override
-  String get cropper => '裁剪';
+  String get cropper => 'crop';
 
   @override
   String get shootingTips => 'Tap to take photo.';

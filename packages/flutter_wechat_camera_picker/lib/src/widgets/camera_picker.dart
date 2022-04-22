@@ -861,9 +861,9 @@ class CameraPickerState extends State<CameraPicker>
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Row(
             children: <Widget>[
-              if (cameras.length > 1) switchCamerasButton,
-              const Spacer(),
               switchFlashesButton(v),
+              const Spacer(),
+              if (cameras.length > 1) switchCamerasButton,
             ],
           ),
         );
@@ -964,8 +964,8 @@ class CameraPickerState extends State<CameraPicker>
       tooltip: MaterialLocalizations.of(context).backButtonTooltip,
       icon: Container(
         alignment: Alignment.center,
-        width: 27,
-        height: 27,
+        width: 24,
+        height: 24,
         decoration: const BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
@@ -978,8 +978,9 @@ class CameraPickerState extends State<CameraPicker>
   /// The shooting button.
   /// 拍照按钮
   Widget shootingButton(BoxConstraints constraints) {
-    const Size outerSize = Size.square(115);
-    const Size innerSize = Size.square(82);
+    final scal = MediaQuery.of(context).size.width/375.0;
+     Size outerSize = Size.square(90.0*scal);
+     Size innerSize = Size.square(64.0*scal);
     return Semantics(
       label: _textDelegate.sActionShootingButtonTooltip,
       onTap: onTap,
@@ -1006,9 +1007,9 @@ class CameraPickerState extends State<CameraPicker>
                     height: isShootingButtonAnimate
                         ? outerSize.height
                         : innerSize.height,
-                    padding: EdgeInsets.all(isShootingButtonAnimate ? 41 : 11),
+                    padding: EdgeInsets.all(isShootingButtonAnimate ? 41*scal : 11*scal),
                     decoration: BoxDecoration(
-                      color: theme.canvasColor.withOpacity(0.85),
+                      color: theme.canvasColor.withOpacity(0.30),
                       shape: BoxShape.circle,
                     ),
                     child: const DecoratedBox(
