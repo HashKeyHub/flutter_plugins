@@ -405,10 +405,15 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
   /// 预览的操作区。包括"返回"和"确定"按钮。
   Widget viewerActions(BuildContext context) {
 
+    final top = MediaQuery.of(context).padding.top > 5 ? MediaQuery.of(context).padding.top - 5 : MediaQuery.of(context).padding.top;
+
+    final bottom = MediaQuery.of(context).padding.bottom >10? MediaQuery.of(context).padding.bottom-10 :MediaQuery.of(context).padding.bottom;
+
     return  Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-      Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top -5),child:
+      Padding(padding: EdgeInsets.only(top: top ),
+        child:
       Semantics(
         sortKey: const OrdinalSortKey(0),
         child: Row(
@@ -418,7 +423,7 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
           ],
         ),
       ),),
-        Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom -10),
+        Padding(padding: EdgeInsets.only(bottom: bottom),
           child:Semantics(
           sortKey: const OrdinalSortKey(2),
           child: Container(
