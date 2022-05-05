@@ -407,36 +407,26 @@ class _CameraPickerViewerState extends State<CameraPickerViewer> {
 
     final top = MediaQuery.of(context).padding.top > 5 ? MediaQuery.of(context).padding.top - 5 : MediaQuery.of(context).padding.top;
 
-    final bottom = MediaQuery.of(context).padding.bottom >10? MediaQuery.of(context).padding.bottom-10 :MediaQuery.of(context).padding.bottom;
 
     return  Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
       Padding(padding: EdgeInsets.only(top: top ),
-        child:
-      Semantics(
-        sortKey: const OrdinalSortKey(0),
-        child: Row(
+        child:Row(
           children: <Widget>[
             previewBackButton(context),
             const Spacer(),
           ],
-        ),
-      ),),
-        Padding(padding: EdgeInsets.only(bottom: bottom),
-          child:Semantics(
-          sortKey: const OrdinalSortKey(2),
-          child: Container(
-            padding:const EdgeInsets.only(left: 15,right: 15),
-            child: Row(
-              children: <Widget>[
-                if (pickerType == CameraPickerViewType.image) cropperButton else const SizedBox(),
-                const Spacer(),
-                previewConfirmButton,
-              ],
-            ),
+        ),),
+        Container(
+          padding:const EdgeInsets.only(left: 15,right: 15,top: 15,bottom: 15),
+          child: Row(
+            children: <Widget>[
+              if (pickerType == CameraPickerViewType.image) cropperButton else const SizedBox(),
+              const Spacer(),
+              previewConfirmButton,
+            ],
           ),
-        ),
         ),
 
       ],
