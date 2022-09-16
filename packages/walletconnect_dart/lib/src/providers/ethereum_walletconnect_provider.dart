@@ -84,10 +84,11 @@ class EthereumWalletConnectProvider extends WalletConnectProvider {
   Future<String> sendTransaction({
     required String from,
     String? to,
-    Uint8List? data,
+    String? data,
     int? gas,
     BigInt? gasPrice,
     BigInt? value,
+    BigInt? gasLimit,
     int? nonce,
   }) async {
     final result = await connector.sendCustomRequest(
@@ -95,12 +96,13 @@ class EthereumWalletConnectProvider extends WalletConnectProvider {
       params: [
         {
           'from': from,
-          if (data != null) 'data': hex.encode(List<int>.from(data)),
+          if (data != null) 'data': data,
           if (to != null) 'to': to,
           if (gas != null) 'gas': '0x${gas.toRadixString(16)}',
           if (gasPrice != null) 'gasPrice': '0x${gasPrice.toRadixString(16)}',
           if (value != null) 'value': '0x${value.toRadixString(16)}',
           if (nonce != null) 'nonce': '0x${nonce.toRadixString(16)}',
+          if (gasLimit != null) 'gasLimit': '0x${gasLimit.toRadixString(16)}',
         }
       ],
     );
@@ -121,10 +123,11 @@ class EthereumWalletConnectProvider extends WalletConnectProvider {
   Future<String> signTransaction({
     required String from,
     String? to,
-    Uint8List? data,
+    String? data,
     int? gas,
     BigInt? gasPrice,
     BigInt? value,
+    BigInt? gasLimit,
     int? nonce,
   }) async {
     final result = await connector.sendCustomRequest(
@@ -132,12 +135,13 @@ class EthereumWalletConnectProvider extends WalletConnectProvider {
       params: [
         {
           'from': from,
-          if (data != null) 'data': hex.encode(List<int>.from(data)),
+          if (data != null) 'data': data,
           if (to != null) 'to': to,
           if (gas != null) 'gas': '0x${gas.toRadixString(16)}',
           if (gasPrice != null) 'gasPrice': '0x${gasPrice.toRadixString(16)}',
           if (value != null) 'value': '0x${value.toRadixString(16)}',
           if (nonce != null) 'nonce': '0x${nonce.toRadixString(16)}',
+          if (gasLimit != null) 'gasLimit': '0x${gasLimit.toRadixString(16)}',
         }
       ],
     );
