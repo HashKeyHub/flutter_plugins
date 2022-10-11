@@ -97,9 +97,16 @@ class WalletConnectSession {
     handshakeTopic = '';
   }
 
+  /// Get the Trust display uri.
+  String toUriTrust() {
+    return '$protocol%3A$handshakeTopic%40$version%3Fbridge%3D${Uri
+        .encodeComponent(bridge)}%26key%3D${hex.encode(key ?? [])}';
+  }
+
   /// Get the display uri.
   String toUri() {
-    return '$protocol:$handshakeTopic@$version?bridge=${Uri.encodeComponent(bridge)}&key=${hex.encode(key ?? [])}';
+    return '$protocol:$handshakeTopic@$version?bridge=${Uri.encodeComponent(
+        bridge)}&key=${hex.encode(key ?? [])}';
   }
 
   factory WalletConnectSession.fromJson(Map<String, dynamic> json) =>
