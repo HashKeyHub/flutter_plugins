@@ -10,6 +10,21 @@ class RequestAccounts extends Action {
         );
 }
 
+class EthSign extends Action {
+  EthSign({
+    required String address,
+    required String message,
+    bool optional = false,
+  }) : super(
+          method: 'eth_sign',
+          paramsJson: jsonEncode({
+            'address': address,
+            'message': message,
+          }),
+          optional: optional,
+        );
+}
+
 class PersonalSign extends Action {
   PersonalSign({
     required String address,
