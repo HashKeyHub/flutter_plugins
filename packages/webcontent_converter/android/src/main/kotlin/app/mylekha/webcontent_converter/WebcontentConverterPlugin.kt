@@ -93,13 +93,22 @@ class WebcontentConverterPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
                                     webView.evaluateJavascript("document.body.offsetHeight") { offsetHeight ->
                                         print("\noffsetWidth : $offsetWidth")
                                         print("\noffsetHeight : $offsetHeight")
-                                        var data = webView.toBitmap(offsetWidth!!.toDouble(), offsetHeight!!.toDouble())
-                                        if (data != null) {
-                                            val bytes = data.toByteArray()
+                                        try {
+                                            if (offsetWidth != null && offsetHeight != null) {
+                                                var data = webView.toBitmap(
+                                                    offsetWidth!!.toDouble(),
+                                                    offsetHeight!!.toDouble()
+                                                )
+                                                if (data != null) {
+                                                    val bytes = data.toByteArray()
 //                                            saveWebView(data)
-                                            //ByteArray(0)
-                                            result.success(bytes)
-                                            println("\n Got snapshot")
+                                                    //ByteArray(0)
+                                                    result.success(bytes)
+                                                    println("\n Got snapshot")
+                                                }
+                                            }
+                                        } catch (e : Exception) {
+                                            print("\nerror : $e")
                                         }
                                     }
                                 }
