@@ -33,27 +33,32 @@ public class SwiftWebcontentConverterPlugin: NSObject, FlutterPlugin {
             }
             self.webView.isHidden = true
             self.webView.tag = 100
+            self.webView.scrollView.contentInsetAdjustmentBehavior = .never
+            // self.webView.evaluateJavaScript("document.body.style.margin='0';document.body.style.padding = '0'")
             self.webView.loadHTMLString(content!, baseURL: Bundle.main.resourceURL)// load html into hidden webview
             var bytes = FlutterStandardTypedData.init(bytes: Data() )
             urlObservation = webView.observe(\.isLoading, changeHandler: { (webView, change) in
                 DispatchQueue.main.asyncAfter(deadline: .now() + (duration!/10000) ) {
-                        print("height = \(self.webView.scrollView.contentSize.height)")
-                        print("width = \(self.webView.scrollView.contentSize.width)")
+                    // print("===content===: \(String(describing: content))")
+                    // print("===webview===: \(String(describing: self.webView))")
+                    // print("height = \(String(describing: self.webView.scrollView.contentSize.height))")
+                    // print("width = \(String(describing: self.webView.scrollView.contentSize.width))")
                     if #available(iOS 11.0, *) {
                         let configuration = WKSnapshotConfiguration()
                         configuration.rect = CGRect(origin: .zero, size: (self.webView.scrollView.contentSize))
                         self.webView.snapshotView(afterScreenUpdates: true)
                         self.webView.takeSnapshot(with: configuration) { (image, error) in
+                            if image == nil {return};
                             guard let data = image!.jpegData(compressionQuality: 1) else {
                                 result( bytes )
-                                self.dispose()
+                                // self.dispose()
                                 return
                             }
                             bytes = FlutterStandardTypedData.init(bytes: data)
                             result(bytes)
                             // UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
                             //dispose
-                            self.dispose()
+                            // self.dispose()
                             print("Got snapshot")
                         }
                     } else if #available(iOS 9.0, *) {
