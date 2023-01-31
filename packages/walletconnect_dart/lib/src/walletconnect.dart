@@ -15,6 +15,8 @@ import 'package:walletconnect_dart/src/utils/bridge_utils.dart';
 import 'package:walletconnect_dart/src/utils/event.dart';
 import 'package:walletconnect_dart/src/utils/event_bus.dart';
 
+import 'utils/event.dart';
+
 const ethSigningMethods = [
   'eth_sendTransaction',
   'eth_signTransaction',
@@ -637,11 +639,21 @@ class WalletConnect {
 
     // Close the web socket connection
     await _transport.close(forceClose: forceClose);
-
-    // Notify listeners
-    _eventBus.fire(Event<Map<String, dynamic>>('disconnect', {
-      'message': errorMessage ?? '',
-    }));
+    try {
+      if (forceClose) {
+        for (var key in _pendingRequests.keys) {
+          _pendingRequests.remove(key);
+        }
+        _eventBus.destroy();
+      } else {
+        // Notify listeners
+        _eventBus.fire(Event<Map<String, dynamic>>('disconnect', {
+          'message': errorMessage ?? '',
+        }));
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
