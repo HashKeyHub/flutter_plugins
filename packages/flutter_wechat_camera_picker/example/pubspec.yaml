@@ -1,0 +1,18 @@
+name: wechat_camera_picker_demo
+description: A new Flutter project.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 3.0.0+6
+
+environment:
+  sdk: '>=2.14.0 <3.0.0'
+  flutter: '>=2.5.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  wechat_camera_picker:
+    path: ../
+
+flutter:
+  uses-material-design: true
